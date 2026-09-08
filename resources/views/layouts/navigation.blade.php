@@ -21,6 +21,11 @@
                     <x-nav-link :href="route('deals.history')" :active="request()->routeIs('deals.history')">
                         {{ __('Мої угоди') }}
                     </x-nav-link>
+                    @if (in_array(auth()->user()->role, ['manager', 'admin']))
+                        <x-nav-link :href="route('admin.cars.index')" :active="request()->routeIs('admin.*')">
+                            {{ __('Адмінка') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -82,6 +87,11 @@
             <x-responsive-nav-link :href="route('deals.history')" :active="request()->routeIs('deals.history')">
                 {{ __('Мої угоди') }}
             </x-responsive-nav-link>
+            @if (in_array(auth()->user()->role, ['manager', 'admin']))
+                <x-responsive-nav-link :href="route('admin.cars.index')" :active="request()->routeIs('admin.*')">
+                    {{ __('Адмінка') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

@@ -30,6 +30,10 @@ Route::get('/my-deals', [DealHistoryController::class, 'index'])->name('deals.hi
 
 Route::post('/deals/{deal}/confirm', [DealController::class, 'confirm'])->name('deals.confirm');
 
+Route::middleware(['auth', 'manager'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('cars', \App\Http\Controllers\Admin\CarAdminController::class);
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
