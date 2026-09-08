@@ -10,8 +10,8 @@
 
         <div class="flex gap-3">
             <a href="{{ route('deals.create-rental', $car) }}" class="bg-blue-600 text-white px-4 py-2 rounded">Орендувати</a>
-            <a href="#" class="bg-green-600 text-white px-4 py-2 rounded">Викупити</a>
-            <a href="#" class="bg-purple-600 text-white px-4 py-2 rounded">Лізинг</a>
+            <a href="{{ route('deals.create-buyout', $car) }}" class="bg-green-600 text-white px-4 py-2 rounded">Викупити</a>
+            <a href="{{ route('deals.create-leasing', $car) }}" class="bg-purple-600 text-white px-4 py-2 rounded">Лізинг</a>
         </div>
     </div>
 </x-app-layout>

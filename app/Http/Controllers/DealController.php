@@ -53,4 +53,59 @@ class DealController extends Controller
     {
         return view('deals.show', compact('deal'));
     }
+    public function createBuyout(Car $car)
+    {
+        return view('deals.create-buyout', compact('car'));
+    }
+
+    public function storeBuyout(Car $car)
+    {
+        if (!$car->buyout_price) {
+            return back()->withErrors(['buyout' => 'Для цього автомобіля викуп недоступний.']);
+        }
+
+        $deal = Deal::create([
+            'user_id' => auth()->id(),
+            'car_id' => $car->id,
+            'type' => 'buyout',
+            'status' => 'pending',
+            'total_price' => $car->buyout_price,
+        ]);
+
+        return redirect()->route('deals.show', $deal)->with('success', 'Заявку на викуп створено.');
+    }
+    public function createLeasing(Car $car)
+    {
+        return view('deals.create-leasing', compact('car'));
+    }
+
+    public function storeLeasing(Request $request, Car $car)
+    {
+        $validated = $request->validate([
+            'amount' => 'required|numeric|min:1',
+            'leasing_months' => 'required|integer|min:1|max:60',
+        ]);
+
+        $deal = Deal::create([
+            'user_id' => auth()->id(),
+            'car_id' => $car->id,
+            'type' => 'leasing',
+            'status' => 'pending',
+            'total_price' => $validated['amount'],
+            'leasing_months' => $validated['leasing_months'],
+        ]);
+
+        $monthlyPayment = round($validated['amount'] / $validated['leasing_months'], 2);
+        $startDate = now()->addMonth()->startOfMonth();
+
+        for ($i = 0; $i < $validated['leasing_months']; $i++) {
+            $deal->leasingSchedules()->create([
+                'payment_date' => $startDate->copy()->addMonths($i),
+                'amount' => $monthlyPayment,
+                'status' => 'pending',
+            ]);
+        }
+
+        return redirect()->route('deals.show', $deal)->with('success', 'Заявку на лізинг створено, графік платежів сформовано.');
+    }
 }

@@ -17,5 +17,26 @@
         @if ($deal->total_price)
             <p class="text-gray-900">Вартість: {{ $deal->total_price }} грн</p>
         @endif
+            @if ($deal->type === 'leasing' && $deal->leasingSchedules->count())
+                <h2 class="text-xl font-semibold mt-6 mb-2 text-gray-900">Графік платежів</h2>
+                <table class="w-full border text-gray-900">
+                    <thead>
+                    <tr class="border-b">
+                        <th class="text-left p-2">Дата</th>
+                        <th class="text-left p-2">Сума</th>
+                        <th class="text-left p-2">Статус</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach ($deal->leasingSchedules as $schedule)
+                        <tr class="border-b">
+                            <td class="p-2">{{ $schedule->payment_date }}</td>
+                            <td class="p-2">{{ $schedule->amount }} грн</td>
+                            <td class="p-2">{{ $schedule->status }}</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            @endif
     </div>
 </x-app-layout>
