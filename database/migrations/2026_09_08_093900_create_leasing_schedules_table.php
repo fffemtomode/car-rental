@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('leasing_schedules', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('deal_id')->constrained()->cascadeOnDelete();
+            $table->date('payment_date');
+            $table->decimal('amount', 10, 2);
+            $table->enum('status', ['pending', 'paid'])->default('pending');
             $table->timestamps();
         });
     }
