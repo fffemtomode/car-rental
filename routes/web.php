@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CarController;
+use App\Http\Controllers\DealHistoryController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -24,6 +25,8 @@ Route::post('/cars/{car}/leasing', [DealController::class, 'storeLeasing'])->nam
 
 Route::get('/cars/{car}/buyout', [DealController::class, 'createBuyout'])->name('deals.create-buyout');
 Route::post('/cars/{car}/buyout', [DealController::class, 'storeBuyout'])->name('deals.store-buyout');
+
+Route::get('/my-deals', [DealHistoryController::class, 'index'])->name('deals.history');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
