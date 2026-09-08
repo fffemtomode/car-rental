@@ -11,6 +11,13 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+use App\Http\Controllers\DealController;
+
+Route::middleware('auth')->group(function () {
+    Route::get('/cars/{car}/rent', [DealController::class, 'createRental'])->name('deals.create-rental');
+    Route::post('/cars/{car}/rent', [DealController::class, 'storeRental'])->name('deals.store-rental');
+    Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

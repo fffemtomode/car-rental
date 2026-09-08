@@ -9,7 +9,7 @@
         <p class="mb-4">Статус: {{ $car->status }}</p>
 
         <div class="flex gap-3">
-            <a href="#" class="bg-blue-600 text-white px-4 py-2 rounded">Орендувати</a>
+            <a href="{{ route('deals.create-rental', $car) }}" class="bg-blue-600 text-white px-4 py-2 rounded">Орендувати</a>
             <a href="#" class="bg-green-600 text-white px-4 py-2 rounded">Викупити</a>
             <a href="#" class="bg-purple-600 text-white px-4 py-2 rounded">Лізинг</a>
         </div>
