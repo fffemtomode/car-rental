@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Car;
 use App\Models\Deal;
 use Illuminate\Http\Request;
+use App\Models\Contract;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DealController extends Controller
 {
@@ -107,5 +109,23 @@ class DealController extends Controller
         }
 
         return redirect()->route('deals.show', $deal)->with('success', 'Заявку на лізинг створено, графік платежів сформовано.');
+    }
+    public function confirm(Deal $deal)
+    {
+        $deal->update(['status' => 'confirmed']);
+
+        $pdf = Pdf::loadView('pdf.contract', ['deal' => $deal]);
+        $fileName = 'contract_' . $deal->id . '.pdf';
+        $path = 'contracts/' . $fileName;
+
+        \Storage::disk('public')->put($path, $pdf->output());
+
+        Contract::create([
+            'deal_id' => $deal->id,
+            'file_path' => $path,
+            'signed_at' => now(),
+        ]);
+
+        return redirect()->route('deals.show', $deal)->with('success', 'Угоду підтверджено, договір сформовано.');
     }
 }

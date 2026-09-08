@@ -28,6 +28,8 @@ Route::post('/cars/{car}/buyout', [DealController::class, 'storeBuyout'])->name(
 
 Route::get('/my-deals', [DealHistoryController::class, 'index'])->name('deals.history');
 
+Route::post('/deals/{deal}/confirm', [DealController::class, 'confirm'])->name('deals.confirm');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
