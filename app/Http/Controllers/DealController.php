@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Car;
 use App\Models\Deal;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Contract;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -48,6 +49,8 @@ class DealController extends Controller
             'total_price' => $totalPrice,
         ]);
 
+        $this->notifyManagers($deal);
+
         return redirect()->route('deals.show', $deal)->with('success', 'Заявку на оренду створено.');
     }
 
@@ -55,6 +58,7 @@ class DealController extends Controller
     {
         return view('deals.show', compact('deal'));
     }
+
     public function createBuyout(Car $car)
     {
         return view('deals.create-buyout', compact('car'));
@@ -74,8 +78,11 @@ class DealController extends Controller
             'total_price' => $car->buyout_price,
         ]);
 
+        $this->notifyManagers($deal);
+
         return redirect()->route('deals.show', $deal)->with('success', 'Заявку на викуп створено.');
     }
+
     public function createLeasing(Car $car)
     {
         return view('deals.create-leasing', compact('car'));
@@ -108,8 +115,11 @@ class DealController extends Controller
             ]);
         }
 
+        $this->notifyManagers($deal);
+
         return redirect()->route('deals.show', $deal)->with('success', 'Заявку на лізинг створено, графік платежів сформовано.');
     }
+
     public function confirm(Deal $deal)
     {
         $deal->update(['status' => 'confirmed']);
@@ -126,6 +136,21 @@ class DealController extends Controller
             'signed_at' => now(),
         ]);
 
+        $deal->user->appNotifications()->create([
+            'message' => "Вашу угоду #{$deal->id} підтверджено, договір сформовано.",
+            'type' => 'deal_confirmed',
+        ]);
+
         return redirect()->route('deals.show', $deal)->with('success', 'Угоду підтверджено, договір сформовано.');
+    }
+
+    private function notifyManagers(Deal $deal): void
+    {
+        User::whereIn('role', ['manager', 'admin'])->get()->each(function ($manager) use ($deal) {
+            $manager->appNotifications()->create([
+                'message' => "Нова заявка #{$deal->id} на {$deal->type} від {$deal->user->name}.",
+                'type' => 'new_deal',
+            ]);
+        });
     }
 }

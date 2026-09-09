@@ -38,11 +38,13 @@
                     </tbody>
                 </table>
             @endif
-            @if ($deal->status === 'pending')
-                <form method="POST" action="{{ route('deals.confirm', $deal) }}" class="mt-4">
+            @if ($deal->status === 'pending' && in_array(auth()->user()->role, ['manager', 'admin']))
+                <form method="POST" action="{{ route('admin.deals.confirm', $deal) }}" class="mt-4">
                     @csrf
                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Підтвердити угоду</button>
                 </form>
+            @elseif ($deal->status === 'pending')
+                <p class="mt-4 text-gray-600">Очікує підтвердження менеджером.</p>
             @endif
 
             @if ($deal->contract)
