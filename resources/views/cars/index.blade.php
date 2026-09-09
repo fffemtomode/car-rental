@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-7xl mx-auto py-6 px-4">
+    <div class="max-w-3xl mx-auto py-6 px-4">
         <h1 class="text-2xl font-bold mb-4">Каталог автомобілів</h1>
 
         <form method="GET" class="mb-6 flex gap-3">
@@ -9,14 +9,29 @@
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Фільтр</button>
         </form>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="flex flex-col gap-4">
             @forelse ($cars as $car)
-                <a href="{{ route('cars.show', $car) }}" class="border rounded-lg p-4 hover:shadow-lg">
-                    <h2 class="font-semibold text-lg">{{ $car->brand }} {{ $car->model }} ({{ $car->year }})</h2>
-                    <p class="text-gray-600">Оренда: {{ $car->price_per_day }} грн/добу</p>
-                    @if ($car->buyout_price)
-                        <p class="text-gray-600">Викуп: {{ $car->buyout_price }} грн</p>
-                    @endif
+                <a href="{{ route('cars.show', $car) }}" class="border rounded-lg overflow-hidden hover:shadow-lg flex flex-col sm:flex-row">
+                    <div class="sm:w-64 shrink-0 aspect-video sm:aspect-auto sm:h-40">
+                        @if ($car->photo)
+                            <img src="{{ Storage::url($car->photo) }}" class="w-full h-full object-cover">
+                        @else
+                            <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm">Немає фото</div>
+                        @endif
+                    </div>
+                    <div class="p-4 flex-1">
+                        <h2 class="font-semibold text-lg text-gray-900">{{ $car->brand }} {{ $car->model }} ({{ $car->year }})</h2>
+                        @if ($car->engine)
+                            <p class="text-gray-600 text-sm">Двигун: {{ $car->engine }}</p>
+                        @endif
+                        @if ($car->mileage)
+                            <p class="text-gray-600 text-sm">Пробіг: {{ number_format($car->mileage, 0, '', ' ') }} км</p>
+                        @endif
+                        <p class="text-gray-900 mt-2">Оренда: <strong>{{ $car->price_per_day }} грн/добу</strong></p>
+                        @if ($car->buyout_price)
+                            <p class="text-gray-900">Викуп: <strong>{{ $car->buyout_price }} грн</strong></p>
+                        @endif
+                    </div>
                 </a>
             @empty
                 <p>Автомобілів поки немає.</p>

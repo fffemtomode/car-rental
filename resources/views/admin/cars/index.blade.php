@@ -12,6 +12,7 @@
         <table class="w-full border text-gray-900">
             <thead>
             <tr class="border-b bg-gray-100">
+                <th class="text-left p-2">Фото</th>
                 <th class="text-left p-2">Марка/Модель</th>
                 <th class="text-left p-2">Рік</th>
                 <th class="text-left p-2">Ціна/день</th>
@@ -22,6 +23,13 @@
             <tbody>
             @foreach ($cars as $car)
                 <tr class="border-b">
+                    <td class="p-2">
+                        @if ($car->photo)
+                            <img src="{{ Storage::url($car->photo) }}" class="w-20 h-14 object-cover rounded">
+                        @else
+                            <div class="w-20 h-14 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">Немає</div>
+                        @endif
+                    </td>
                     <td class="p-2">{{ $car->brand }} {{ $car->model }}</td>
                     <td class="p-2">{{ $car->year }}</td>
                     <td class="p-2">{{ $car->price_per_day }} грн</td>
