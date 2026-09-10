@@ -46,6 +46,10 @@ Route::middleware(['auth', 'manager'])->prefix('admin')->name('admin.')->group(f
     Route::resource('cars', CarAdminController::class);
     Route::get('/deals', [DealAdminController::class, 'index'])->name('deals.index');
     Route::post('/deals/{deal}/confirm', [DealController::class, 'confirm'])->name('deals.confirm');
+
+    Route::get('/cars/{car}/maintenance', [\App\Http\Controllers\Admin\CarMaintenanceController::class, 'index'])->name('cars.maintenance');
+    Route::post('/cars/{car}/maintenance', [\App\Http\Controllers\Admin\CarMaintenanceController::class, 'store'])->name('cars.maintenance.store');
+
 });
 
 require __DIR__.'/auth.php';
