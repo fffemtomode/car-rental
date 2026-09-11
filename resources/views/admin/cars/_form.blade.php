@@ -47,8 +47,16 @@
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Статус</label>
         <select name="status" class="border rounded px-3 py-2 w-full">
-            @foreach (['available', 'rented', 'sold', 'maintenance'] as $status)
-                <option value="{{ $status }}" @selected(old('status', $car->status ?? '') === $status)>{{ $status }}</option>
+            @php
+                $statusLabels = [
+                    'available' => 'Доступний',
+                    'rented' => 'В оренді',
+                    'sold' => 'Проданий',
+                    'maintenance' => 'На обслуговуванні',
+                ];
+            @endphp
+            @foreach ($statusLabels as $value => $label)
+                <option value="{{ $value }}" @selected(old('status', $car->status ?? '') === $value)>{{ $label }}</option>
             @endforeach
         </select>
     </div>

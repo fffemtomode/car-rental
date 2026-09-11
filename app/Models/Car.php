@@ -21,4 +21,14 @@ class Car extends Model
     {
         return $this->hasMany(CarMaintenanceLog::class);
     }
+    public function getStatusLabelAttribute(): string
+    {
+        return match ($this->status) {
+            'available' => 'Доступний',
+            'rented' => 'В оренді',
+            'sold' => 'Проданий',
+            'maintenance' => 'На обслуговуванні',
+            default => $this->status,
+        };
+    }
 }

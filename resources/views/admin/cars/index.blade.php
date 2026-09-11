@@ -33,7 +33,7 @@
                     <td class="p-2">{{ $car->brand }} {{ $car->model }}</td>
                     <td class="p-2">{{ $car->year }}</td>
                     <td class="p-2">{{ $car->price_per_day }} грн</td>
-                    <td class="p-2">{{ $car->status }}</td>
+                    <td class="p-2">{{ $car->status_label }}</td>
                     <td class="p-2">
                         <div class="flex items-center gap-3">
                             <a href="{{ route('admin.cars.edit', $car) }}" class="text-blue-600 hover:underline">Редагувати</a>

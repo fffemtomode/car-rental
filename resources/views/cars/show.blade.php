@@ -17,7 +17,7 @@
         @if ($car->buyout_price)
             <p class="mb-2">Ціна викупу: <strong>{{ $car->buyout_price }} грн</strong></p>
         @endif
-        <p class="mb-4">Статус: {{ $car->status }}</p>
+        <p class="mb-4">Статус: {{ $car->status_label }}</p>
 
         <div class="flex gap-3">
             <a href="{{ route('deals.create-rental', $car) }}" class="bg-blue-600 text-white px-4 py-2 rounded">Орендувати</a>

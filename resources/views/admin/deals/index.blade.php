@@ -21,8 +21,8 @@
                 <tr class="border-b">
                     <td class="p-2">{{ $deal->user->name }}</td>
                     <td class="p-2">{{ $deal->car->brand }} {{ $deal->car->model }}</td>
-                    <td class="p-2">{{ $deal->type }}</td>
-                    <td class="p-2">{{ $deal->status }}</td>
+                    <td class="p-2">{{ $deal->type_label }}</td>
+                    <td class="p-2">{{ $deal->status_label }}</td>
                     <td class="p-2">
                         <a href="{{ route('deals.show', $deal) }}" class="text-blue-600">Деталі</a>
                     </td>

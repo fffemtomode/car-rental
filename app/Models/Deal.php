@@ -32,4 +32,25 @@ class Deal extends Model
     {
         return $this->hasMany(LeasingSchedule::class);
     }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return match ($this->status) {
+            'pending' => 'Очікує підтвердження',
+            'confirmed' => 'Підтверджено',
+            'completed' => 'Завершено',
+            'cancelled' => 'Скасовано',
+            default => $this->status,
+        };
+    }
+
+    public function getTypeLabelAttribute(): string
+    {
+        return match ($this->type) {
+            'rental' => 'Оренда',
+            'buyout' => 'Викуп',
+            'leasing' => 'Лізинг',
+            default => $this->type,
+        };
+    }
 }
