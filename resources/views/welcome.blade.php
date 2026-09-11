@@ -3,10 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CarHub — оренда, викуп та лізинг авто</title>
+    <title>CarRental — оренда, викуп та лізинг авто</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -15,7 +15,7 @@
 <!-- Header -->
 <header class="bg-white border-b border-gray-100">
     <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-        <span class="text-xl font-bold text-blue-600">CarHub</span>
+        <span class="text-2xl font-bold text-blue-600">CarRental</span>
 
         <nav class="flex items-center gap-4">
             @if (Route::has('login'))
@@ -33,39 +33,39 @@
 </header>
 
 <!-- Hero -->
-<section class="max-w-6xl mx-auto px-4 py-20 text-center">
-    <h1 class="text-4xl sm:text-5xl font-bold mb-4">
-        Оренда, викуп та лізинг авто — в одному місці
+<section class="max-w-5xl mx-auto px-4 pt-24 pb-24 text-center">
+    <h1 class="text-5xl sm:text-6xl font-extrabold leading-tight mb-6">
+        Оренда, викуп та лізинг<br>авто — в одному місці
     </h1>
-    <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+    <p class="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
         Обери авто з каталогу і формат користування, який тобі зручний. Оформлення заявки й договору — онлайн, за кілька хвилин.
     </p>
-    <a href="{{ route('cars.index') }}" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-700">
+    <a href="{{ route('cars.index') }}" class="inline-block bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-medium hover:bg-blue-700">
         Переглянути каталог
     </a>
 </section>
 
 <!-- Features -->
-<section class="max-w-6xl mx-auto px-4 pb-20">
+<section class="max-w-6xl mx-auto px-4 pb-24">
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div class="bg-white border rounded-lg p-6">
-            <h3 class="font-semibold text-lg mb-2">Оренда</h3>
-            <p class="text-gray-600 text-sm">Обери авто та період — оплата тільки за дні користування.</p>
+        <div class="bg-white border rounded-xl p-8">
+            <h3 class="font-bold text-xl mb-3">Оренда</h3>
+            <p class="text-gray-600">Обери авто та період — оплата тільки за дні користування.</p>
         </div>
-        <div class="bg-white border rounded-lg p-6">
-            <h3 class="font-semibold text-lg mb-2">Викуп</h3>
-            <p class="text-gray-600 text-sm">Переходь від оренди до повного володіння автомобілем.</p>
+        <div class="bg-white border rounded-xl p-8">
+            <h3 class="font-bold text-xl mb-3">Викуп</h3>
+            <p class="text-gray-600">Переходь від оренди до повного володіння автомобілем.</p>
         </div>
-        <div class="bg-white border rounded-lg p-6">
-            <h3 class="font-semibold text-lg mb-2">Лізинг</h3>
-            <p class="text-gray-600 text-sm">Користуйся авто довгостроково, розділивши вартість на щомісячні платежі.</p>
+        <div class="bg-white border rounded-xl p-8">
+            <h3 class="font-bold text-xl mb-3">Лізинг</h3>
+            <p class="text-gray-600">Користуйся авто довгостроково, розділивши вартість на щомісячні платежі.</p>
         </div>
     </div>
 </section>
 
 <!-- Footer -->
 <footer class="border-t border-gray-100 py-6 text-center text-sm text-gray-500">
-    CarHub — курсовий проєкт, {{ date('Y') }}
+    CarRental — курсовий проєкт, {{ date('Y') }}
 </footer>
 
 </body>
