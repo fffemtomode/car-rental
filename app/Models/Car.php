@@ -31,4 +31,21 @@ class Car extends Model
             default => $this->status,
         };
     }
+    public function bookedDates(): array
+    {
+        $dates = [];
+
+        $this->deals()
+            ->where('type', 'rental')
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->get()
+            ->each(function ($deal) use (&$dates) {
+                $period = \Carbon\CarbonPeriod::create($deal->start_date, $deal->end_date);
+                foreach ($period as $date) {
+                    $dates[] = $date->format('Y-m-d');
+                }
+            });
+
+        return $dates;
+    }
 }

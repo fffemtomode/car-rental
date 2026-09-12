@@ -36,6 +36,8 @@
                     <td class="p-2">{{ $car->status_label }}</td>
                     <td class="p-2">
                         <div class="flex items-center gap-3">
+                            <a href="{{ route('admin.cars.calendar', $car) }}" class="text-green-700 hover:underline">Календар</a>
+                            <span class="text-gray-300">|</span>
                             <a href="{{ route('admin.cars.edit', $car) }}" class="text-blue-600 hover:underline">Редагувати</a>
                             <span class="text-gray-300">|</span>
                             <a href="{{ route('admin.cars.maintenance', $car) }}" class="text-purple-600 hover:underline">ТО</a>
@@ -45,6 +47,7 @@
                                 @method('DELETE')
                                 <button type="submit" class="text-red-600 hover:underline">Видалити</button>
                             </form>
+
                         </div>
                     </td>
                 </tr>

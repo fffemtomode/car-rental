@@ -53,6 +53,8 @@ Route::middleware(['auth', 'manager'])->prefix('admin')->name('admin.')->group(f
     Route::post('/cars/{car}/maintenance', [\App\Http\Controllers\Admin\CarMaintenanceController::class, 'store'])->name('cars.maintenance.store');
 
     Route::post('/deals/{deal}/reject', [DealController::class, 'reject'])->name('deals.reject');
+
+    Route::get('/cars/{car}/calendar', [\App\Http\Controllers\Admin\CarCalendarController::class, 'index'])->name('cars.calendar');
 });
 
 require __DIR__.'/auth.php';

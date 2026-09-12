@@ -19,10 +19,34 @@
         @endif
         <p class="mb-4">Статус: {{ $car->status_label }}</p>
 
-        <div class="flex gap-3">
+        <div class="flex gap-3 mb-6">
             <a href="{{ route('deals.create-rental', $car) }}" class="bg-blue-600 text-white px-4 py-2 rounded">Орендувати</a>
             <a href="{{ route('deals.create-buyout', $car) }}" class="bg-green-600 text-white px-4 py-2 rounded">Викупити</a>
             <a href="{{ route('deals.create-leasing', $car) }}" class="bg-purple-600 text-white px-4 py-2 rounded">Лізинг</a>
+        </div>
+
+        @php
+            $periods = $car->deals()->where('type', 'rental')->whereIn('status', ['pending', 'confirmed'])->get();
+            $dateStatus = [];
+            foreach ($periods as $deal) {
+                $period = \Carbon\CarbonPeriod::create($deal->start_date, $deal->end_date);
+                foreach ($period as $date) {
+                    $dateStatus[$date->format('Y-m-d')] = $deal->user_id === auth()->id() ? 'mine' : 'other';
+                }
+            }
+            $now = \Carbon\Carbon::now();
+        @endphp
+        <h2 class="text-xl font-semibold mt-6 mb-3 text-gray-900">Доступність</h2>
+        <div class="flex gap-4 mb-2 text-sm text-gray-600">
+            <span><span class="inline-block w-3 h-3 bg-green-50 border border-green-200 rounded-sm"></span> вільно</span>
+            <span><span class="inline-block w-3 h-3 bg-blue-100 rounded-sm"></span> моє бронювання</span>
+            <span><span class="inline-block w-3 h-3 bg-red-100 rounded-sm"></span> зайнято іншим</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            @for ($i = 0; $i < 3; $i++)
+                @php $m = $now->copy()->addMonths($i); @endphp
+                @include('partials.calendar-month', ['year' => $m->year, 'month' => $m->month, 'dateStatus' => $dateStatus])
+            @endfor
         </div>
     </div>
 </x-app-layout>
