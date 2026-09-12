@@ -62,12 +62,38 @@
     </div>
 
     <div class="mb-4">
-        <label class="block mb-1 text-gray-900">Фото (формат 16:9)</label>
+        <label class="block mb-1 text-gray-900">Фото автомобіля (формат 16:9, можна декілька)</label>
 
-        @if (!empty($car?->photo))
-            <p class="text-sm text-gray-600 mb-2">Поточне фото:</p>
-            <img src="{{ Storage::url($car->photo) }}" class="w-48 aspect-video object-cover rounded mb-3">
+        @if (!empty($car) && $car->photos->count())
+            <div class="flex gap-3 mb-3 flex-wrap">
+                @foreach ($car->photos as $i => $existingPhoto)
+                    <div class="w-28">
+                        <div class="relative">
+                            <img src="{{ Storage::url($existingPhoto->path) }}" class="w-28 aspect-video object-cover rounded border">
+                            @if ($i === 0)
+                                <span class="absolute top-1 left-1 bg-blue-600 text-white text-[10px] px-1.5 py-0.5 rounded">Головне</span>
+                            @endif
+                        </div>
+                        <div class="flex items-center justify-between mt-1 px-0.5">
+                            <button type="submit" form="moveLeftForm{{ $existingPhoto->id }}"
+                                    class="w-7 h-7 flex items-center justify-center rounded border text-gray-600 hover:bg-gray-100 {{ $i === 0 ? 'invisible' : '' }}">
+                                ‹
+                            </button>
+                            <button type="submit" form="deletePhotoForm{{ $existingPhoto->id }}"
+                                    class="w-7 h-7 flex items-center justify-center rounded border text-red-600 hover:bg-red-50">
+                                🗑
+                            </button>
+                            <button type="submit" form="moveRightForm{{ $existingPhoto->id }}"
+                                    class="w-7 h-7 flex items-center justify-center rounded border text-gray-600 hover:bg-gray-100 {{ $i === $car->photos->count() - 1 ? 'invisible' : '' }}">
+                                ›
+                            </button>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
         @endif
+
+        <div id="newPhotosPreview" class="flex gap-2 mb-3 flex-wrap"></div>
 
         <input type="file" id="photoSourceInput" accept="image/*" class="border rounded px-3 py-2 w-full">
 
@@ -76,68 +102,84 @@
                 <img id="cropperImage" class="max-w-full">
             </div>
             <button type="button" id="cropButton" class="mt-2 bg-gray-700 text-white px-4 py-2 rounded">
-                Обрізати та застосувати
+                Додати це фото
             </button>
         </div>
 
-        <div id="croppedPreviewWrapper" class="mt-3 hidden">
-            <p class="text-sm text-gray-600 mb-1">Нове фото (буде збережено):</p>
-            <img id="croppedPreview" class="w-48 aspect-video object-cover rounded">
-        </div>
-
-        <!-- Реальний файл, що піде на сервер -->
-        <input type="file" name="photo" id="photoFinalInput" class="hidden">
+        <input type="file" name="photos[]" id="photoFinalInput" class="hidden" multiple>
     </div>
 
     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Зберегти</button>
 </form>
 
+@if (!empty($car) && $car->photos->count())
+    @foreach ($car->photos as $existingPhoto)
+        <form id="deletePhotoForm{{ $existingPhoto->id }}" method="POST" action="{{ route('admin.cars.photos.destroy', $existingPhoto) }}" onsubmit="return confirm('Видалити фото?')" class="hidden">
+            @csrf
+            @method('DELETE')
+        </form>
+        <form id="moveLeftForm{{ $existingPhoto->id }}" method="POST" action="{{ route('admin.cars.photos.move', $existingPhoto) }}" class="hidden">
+            @csrf
+            <input type="hidden" name="direction" value="left">
+        </form>
+        <form id="moveRightForm{{ $existingPhoto->id }}" method="POST" action="{{ route('admin.cars.photos.move', $existingPhoto) }}" class="hidden">
+            @csrf
+            <input type="hidden" name="direction" value="right">
+        </form>
+    @endforeach
+@endif
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script>
-    let cropper = null;
+    window.addEventListener('load', function () {
+        let cropper = null;
+        let collectedFiles = [];
 
-    const sourceInput = document.getElementById('photoSourceInput');
-    const cropperWrapper = document.getElementById('cropperWrapper');
-    const cropperImage = document.getElementById('cropperImage');
-    const cropButton = document.getElementById('cropButton');
-    const finalInput = document.getElementById('photoFinalInput');
-    const previewWrapper = document.getElementById('croppedPreviewWrapper');
-    const preview = document.getElementById('croppedPreview');
+        const sourceInput = document.getElementById('photoSourceInput');
+        const cropperWrapper = document.getElementById('cropperWrapper');
+        const cropperImage = document.getElementById('cropperImage');
+        const cropButton = document.getElementById('cropButton');
+        const finalInput = document.getElementById('photoFinalInput');
+        const previewContainer = document.getElementById('newPhotosPreview');
 
-    sourceInput.addEventListener('change', function (e) {
-        const file = e.target.files[0];
-        if (!file) return;
+        sourceInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
 
-        const reader = new FileReader();
-        reader.onload = function (event) {
-            cropperImage.src = event.target.result;
-            cropperWrapper.classList.remove('hidden');
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                cropperImage.src = event.target.result;
+                cropperWrapper.classList.remove('hidden');
 
-            if (cropper) {
-                cropper.destroy();
-            }
-            cropper = new Cropper(cropperImage, {
-                aspectRatio: 16 / 9,
-                viewMode: 1,
-                autoCropArea: 1,
-            });
-        };
-        reader.readAsDataURL(file);
-    });
+                if (cropper) cropper.destroy();
+                cropper = new Cropper(cropperImage, {
+                    aspectRatio: 16 / 9,
+                    viewMode: 1,
+                    autoCropArea: 1,
+                });
+            };
+            reader.readAsDataURL(file);
+        });
 
-    cropButton.addEventListener('click', function () {
-        if (!cropper) return;
+        cropButton.addEventListener('click', function () {
+            if (!cropper) return;
 
-        cropper.getCroppedCanvas({ width: 1280, height: 720 }).toBlob(function (blob) {
-            const croppedFile = new File([blob], 'car-photo.jpg', { type: 'image/jpeg' });
+            cropper.getCroppedCanvas({ width: 1280, height: 720 }).toBlob(function (blob) {
+                const croppedFile = new File([blob], 'car-photo-' + Date.now() + '.jpg', { type: 'image/jpeg' });
+                collectedFiles.push(croppedFile);
 
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(croppedFile);
-            finalInput.files = dataTransfer.files;
+                const dataTransfer = new DataTransfer();
+                collectedFiles.forEach(f => dataTransfer.items.add(f));
+                finalInput.files = dataTransfer.files;
 
-            preview.src = URL.createObjectURL(blob);
-            previewWrapper.classList.remove('hidden');
-            cropperWrapper.classList.add('hidden');
-        }, 'image/jpeg', 0.9);
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(blob);
+                img.className = 'w-24 aspect-video object-cover rounded';
+                previewContainer.appendChild(img);
+
+                cropperWrapper.classList.add('hidden');
+                sourceInput.value = '';
+            }, 'image/jpeg', 0.9);
+        });
     });
 </script>

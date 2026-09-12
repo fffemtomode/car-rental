@@ -24,8 +24,9 @@
             @foreach ($cars as $car)
                 <tr class="border-b">
                     <td class="p-2">
-                        @if ($car->photo)
-                            <img src="{{ Storage::url($car->photo) }}" class="w-20 h-14 object-cover rounded">
+                        @php $thumb = $car->photos->first()?->path ?? $car->photo; @endphp
+                        @if ($thumb)
+                            <img src="{{ Storage::url($thumb) }}" class="w-20 h-14 object-cover rounded">
                         @else
                             <div class="w-20 h-14 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">Немає</div>
                         @endif

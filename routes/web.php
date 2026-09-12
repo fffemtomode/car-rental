@@ -55,6 +55,9 @@ Route::middleware(['auth', 'manager'])->prefix('admin')->name('admin.')->group(f
     Route::post('/deals/{deal}/reject', [DealController::class, 'reject'])->name('deals.reject');
 
     Route::get('/cars/{car}/calendar', [\App\Http\Controllers\Admin\CarCalendarController::class, 'index'])->name('cars.calendar');
+    Route::delete('/cars/photos/{photo}', [CarAdminController::class, 'destroyPhoto'])->name('cars.photos.destroy');
+    Route::post('/cars/photos/{photo}/move', [CarAdminController::class, 'movePhoto'])->name('cars.photos.move');
 });
+
 
 require __DIR__.'/auth.php';

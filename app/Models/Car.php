@@ -48,4 +48,8 @@ class Car extends Model
 
         return $dates;
     }
+    public function photos()
+    {
+        return $this->hasMany(CarPhoto::class)->orderBy('position');
+    }
 }

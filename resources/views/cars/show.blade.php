@@ -2,8 +2,25 @@
     <div class="max-w-3xl mx-auto py-6 px-4">
         <h1 class="text-2xl font-bold mb-4">{{ $car->brand }} {{ $car->model }} ({{ $car->year }})</h1>
 
-        @if ($car->photo)
-            <img src="{{ Storage::url($car->photo) }}" class="w-full max-h-80 object-cover rounded mb-4">
+        @if ($car->photos->count())
+            <div x-data="{ active: 0, total: {{ $car->photos->count() }} }" class="relative mb-4">
+                @foreach ($car->photos as $i => $photo)
+                    <img x-show="active === {{ $i }}" src="{{ Storage::url($photo->path) }}" class="w-full aspect-video object-cover rounded">
+                @endforeach
+
+                @if ($car->photos->count() > 1)
+                    <button type="button" @click="active = (active - 1 + total) % total" class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-9 h-9 flex items-center justify-center shadow">‹</button>
+                    <button type="button" @click="active = (active + 1) % total" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-9 h-9 flex items-center justify-center shadow">›</button>
+
+                    <div class="flex justify-center gap-1 mt-2">
+                        @foreach ($car->photos as $i => $photo)
+                            <button type="button" @click="active = {{ $i }}" :class="active === {{ $i }} ? 'bg-blue-600' : 'bg-gray-300'" class="w-2 h-2 rounded-full"></button>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        @elseif ($car->photo)
+            <img src="{{ Storage::url($car->photo) }}" class="w-full aspect-video object-cover rounded mb-4">
         @endif
 
         @if ($car->engine)

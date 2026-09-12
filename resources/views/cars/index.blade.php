@@ -13,10 +13,25 @@
             @forelse ($cars as $car)
                 <a href="{{ route('cars.show', $car) }}" class="border rounded-lg overflow-hidden hover:shadow-lg flex flex-col sm:flex-row">
                     <div class="sm:w-64 shrink-0 aspect-video sm:aspect-auto sm:h-40">
-                        @if ($car->photo)
-                            <img src="{{ Storage::url($car->photo) }}" class="w-full h-full object-cover">
-                        @else
-                            <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 text-sm">Немає фото</div>
+                        @if ($car->photos->count())
+                            <div x-data="{ active: 0, total: {{ $car->photos->count() }} }" class="relative mb-4">
+                                @foreach ($car->photos as $i => $photo)
+                                    <img x-show="active === {{ $i }}" src="{{ Storage::url($photo->path) }}" class="w-full aspect-video object-cover rounded">
+                                @endforeach
+
+                                @if ($car->photos->count() > 1)
+                                    <button type="button" @click="active = (active - 1 + total) % total" class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-9 h-9 flex items-center justify-center shadow">‹</button>
+                                    <button type="button" @click="active = (active + 1) % total" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-9 h-9 flex items-center justify-center shadow">›</button>
+
+                                    <div class="flex justify-center gap-1 mt-2">
+                                        @foreach ($car->photos as $i => $photo)
+                                            <button type="button" @click="active = {{ $i }}" :class="active === {{ $i }} ? 'bg-blue-600' : 'bg-gray-300'" class="w-2 h-2 rounded-full"></button>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+                        @elseif ($car->photo)
+                            <img src="{{ Storage::url($car->photo) }}" class="w-full aspect-video object-cover rounded mb-4">
                         @endif
                     </div>
                     <div class="p-4 flex-1">
