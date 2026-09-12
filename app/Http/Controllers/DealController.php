@@ -144,6 +144,33 @@ class DealController extends Controller
         return redirect()->route('deals.show', $deal)->with('success', 'Угоду підтверджено, договір сформовано.');
     }
 
+    public function cancel(Deal $deal)
+    {
+        if ($deal->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if (!in_array($deal->status, ['pending', 'confirmed'])) {
+            return back()->withErrors(['status' => 'Цю угоду вже не можна скасувати.']);
+        }
+
+        $deal->update(['status' => 'cancelled']);
+
+        return redirect()->route('deals.show', $deal)->with('success', 'Угоду скасовано.');
+    }
+
+    public function reject(Deal $deal)
+    {
+        $deal->update(['status' => 'cancelled']);
+
+        $deal->user->appNotifications()->create([
+            'message' => "Вашу заявку #{$deal->id} відхилено менеджером.",
+            'type' => 'deal_rejected',
+        ]);
+
+        return redirect()->route('admin.deals.index')->with('success', 'Заявку відхилено.');
+    }
+
     private function notifyManagers(Deal $deal): void
     {
         User::whereIn('role', ['manager', 'admin'])->get()->each(function ($manager) use ($deal) {

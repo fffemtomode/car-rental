@@ -37,6 +37,8 @@ Route::middleware('auth')->group(function () {
         return response()->noContent();
     })->name('notifications.read');
 
+    Route::post('/deals/{deal}/cancel', [DealController::class, 'cancel'])->name('deals.cancel');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -50,6 +52,7 @@ Route::middleware(['auth', 'manager'])->prefix('admin')->name('admin.')->group(f
     Route::get('/cars/{car}/maintenance', [\App\Http\Controllers\Admin\CarMaintenanceController::class, 'index'])->name('cars.maintenance');
     Route::post('/cars/{car}/maintenance', [\App\Http\Controllers\Admin\CarMaintenanceController::class, 'store'])->name('cars.maintenance.store');
 
+    Route::post('/deals/{deal}/reject', [DealController::class, 'reject'])->name('deals.reject');
 });
 
 require __DIR__.'/auth.php';
