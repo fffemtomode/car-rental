@@ -20,12 +20,12 @@
                                 @endforeach
 
                                 @if ($car->photos->count() > 1)
-                                    <button type="button" @click="active = (active - 1 + total) % total" class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-9 h-9 flex items-center justify-center shadow">‹</button>
-                                    <button type="button" @click="active = (active + 1) % total" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-9 h-9 flex items-center justify-center shadow">›</button>
+                                    <button type="button" @click.stop.prevent="active = (active - 1 + total) % total" class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-9 h-9 flex items-center justify-center shadow">‹</button>
+                                    <button type="button" @click.stop.prevent="active = (active + 1) % total" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-9 h-9 flex items-center justify-center shadow">›</button>
 
                                     <div class="flex justify-center gap-1 mt-2">
                                         @foreach ($car->photos as $i => $photo)
-                                            <button type="button" @click="active = {{ $i }}" :class="active === {{ $i }} ? 'bg-blue-600' : 'bg-gray-300'" class="w-2 h-2 rounded-full"></button>
+                                            <button type="button" @click.stop.prevent="active = {{ $i }}" :class="active === {{ $i }} ? 'bg-blue-600' : 'bg-gray-300'" class="w-2 h-2 rounded-full"></button>
                                         @endforeach
                                     </div>
                                 @endif
