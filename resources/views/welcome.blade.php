@@ -35,16 +35,35 @@
 </header>
 
 <!-- Hero -->
-<section class="max-w-5xl mx-auto px-4 pt-24 pb-24 text-center">
-    <h1 class="text-5xl sm:text-6xl font-extrabold leading-tight mb-6">
-        Оренда, викуп та лізинг<br>авто — в одному місці
-    </h1>
-    <p class="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-        Обери авто з каталогу і формат користування, який тобі зручний. Оформлення заявки й договору — онлайн, за кілька хвилин.
-    </p>
-    <a href="{{ route('cars.index') }}" class="inline-block bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-medium hover:bg-blue-700">
-        Переглянути каталог
-    </a>
+<!-- Hero -->
+<section class="max-w-6xl mx-auto px-4 pt-16 pb-16 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+    <div class="text-center lg:text-left">
+        <h1 class="text-5xl sm:text-6xl font-extrabold leading-tight mb-6">
+            Оренда, викуп та лізинг авто — в одному місці
+        </h1>
+        <p class="text-xl text-gray-600 mb-10 max-w-xl mx-auto lg:mx-0">
+            Обери авто з каталогу і формат користування, який тобі зручний. Оформлення заявки й договору — онлайн, за кілька хвилин.
+        </p>
+        <a href="{{ route('cars.index') }}" class="inline-block bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-medium hover:bg-blue-700">
+            Переглянути каталог
+        </a>
+    </div>
+
+    <div class="flex justify-center">
+        <svg viewBox="0 0 400 220" class="w-full max-w-md">
+            <ellipse cx="200" cy="195" rx="160" ry="12" fill="#e5e7eb"/>
+            <path d="M40 150 Q40 110 90 105 L120 75 Q140 60 170 60 L250 60 Q280 60 300 80 L330 105 Q365 108 365 145 L365 150 Q365 165 350 165 L45 165 Q30 165 30 150 Z" fill="#2563eb"/>
+            <path d="M120 105 L140 78 Q150 68 165 68 L200 68 L200 105 Z" fill="#93c5fd"/>
+            <path d="M205 105 L205 68 L245 68 Q262 68 272 82 L290 105 Z" fill="#93c5fd"/>
+            <rect x="40" y="150" width="325" height="8" fill="#1e3a8a"/>
+            <circle cx="110" cy="165" r="28" fill="#111827"/>
+            <circle cx="110" cy="165" r="12" fill="#9ca3af"/>
+            <circle cx="290" cy="165" r="28" fill="#111827"/>
+            <circle cx="290" cy="165" r="12" fill="#9ca3af"/>
+            <rect x="330" y="118" width="18" height="10" rx="2" fill="#fde68a"/>
+            <rect x="55" y="120" width="14" height="8" rx="2" fill="#fca5a5"/>
+        </svg>
+    </div>
 </section>
 
 <!-- Features -->

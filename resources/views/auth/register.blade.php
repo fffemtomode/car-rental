@@ -77,5 +77,10 @@
                 Зареєструватись
             </x-primary-button>
         </div>
+        <div class="mt-4">
+            <x-input-label for="phone" value="Номер телефону" />
+            <x-text-input id="phone" class="block mt-1 w-full" type="tel" name="phone" :value="old('phone')" placeholder="+380..." required autocomplete="tel" />
+            <x-input-error :messages="$errors->get('phone')" class="mt-2" />
+        </div>
     </form>
 </x-guest-layout>

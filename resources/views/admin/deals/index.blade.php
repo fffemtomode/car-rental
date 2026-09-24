@@ -14,6 +14,7 @@
                 <th class="text-left p-2">Тип</th>
                 <th class="text-left p-2">Статус</th>
                 <th class="text-left p-2"></th>
+                <th class="text-left p-2">Телефон</th>
             </tr>
             </thead>
             <tbody>
@@ -26,6 +27,7 @@
                     <td class="p-2">
                         <a href="{{ route('deals.show', $deal) }}" class="text-blue-600">Деталі</a>
                     </td>
+                    <td class="p-2">{{ $deal->user->phone ?? '—' }}</td>
                 </tr>
             @endforeach
             </tbody>

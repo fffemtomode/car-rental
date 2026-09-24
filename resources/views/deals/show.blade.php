@@ -70,10 +70,15 @@
 
         @if ($deal->contract)
             <p class="mt-4">
+
                 <a href="{{ Storage::url($deal->contract->file_path) }}" target="_blank" class="text-blue-600 underline">
                     Завантажити договір (PDF)
                 </a>
             </p>
         @endif
+
+            @if (in_array(auth()->user()->role, ['manager', 'admin']))
+                <p class="text-gray-900">Клієнт: {{ $deal->user->name }} ({{ $deal->user->phone ?? 'без телефону' }})</p>
+            @endif
     </div>
 </x-app-layout>

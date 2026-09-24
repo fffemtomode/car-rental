@@ -37,6 +37,18 @@
         <input type="number" name="mileage" value="{{ old('mileage', $car->mileage ?? '') }}" class="border rounded px-3 py-2 w-full">
     </div>
     <div class="mb-4">
+        <label class="block mb-1 text-gray-900">Колір</label>
+        <input type="text" name="color" value="{{ old('color', $car->color ?? '') }}" class="border rounded px-3 py-2 w-full">
+    </div>
+    <div class="mb-4">
+        <label class="block mb-1 text-gray-900">Державний номерний знак</label>
+        <input type="text" name="plate_number" value="{{ old('plate_number', $car->plate_number ?? '') }}" placeholder="ВХ0230ІС" class="border rounded px-3 py-2 w-full">
+    </div>
+    <div class="mb-4">
+        <label class="block mb-1 text-gray-900">Номер кузова (VIN)</label>
+        <input type="text" name="vin" value="{{ old('vin', $car->vin ?? '') }}" class="border rounded px-3 py-2 w-full">
+    </div>
+    <div class="mb-4">
         <label class="block mb-1 text-gray-900">Ціна оренди/день</label>
         <input type="number" step="0.01" name="price_per_day" value="{{ old('price_per_day', $car->price_per_day ?? '') }}" class="border rounded px-3 py-2 w-full" required>
     </div>

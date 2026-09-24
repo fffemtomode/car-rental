@@ -124,7 +124,7 @@ class DealController extends Controller
     {
         $deal->update(['status' => 'confirmed']);
 
-        $pdf = Pdf::loadView('pdf.contract', ['deal' => $deal]);
+        $pdf = Pdf::loadView('pdf.contract', ['deal' => $deal, 'car' => $deal->car]);
         $fileName = 'contract_' . $deal->id . '.pdf';
         $path = 'contracts/' . $fileName;
 

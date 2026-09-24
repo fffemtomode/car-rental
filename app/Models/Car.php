@@ -10,7 +10,7 @@ class Car extends Model
     use HasFactory;
 
     protected $fillable = [
-        'brand', 'model', 'year', 'engine', 'mileage', 'price_per_day', 'buyout_price', 'status', 'photo',
+        'brand', 'model', 'year', 'engine', 'mileage', 'color', 'plate_number', 'vin', 'price_per_day', 'buyout_price', 'status', 'photo',
     ];
 
     public function deals()
