@@ -35,7 +35,12 @@
                         @endif
                     </div>
                     <div class="p-4 flex-1">
-                        <h2 class="font-semibold text-lg text-gray-900">{{ $car->brand }} {{ $car->model }} ({{ $car->year }})</h2>
+                        <h2 class="font-semibold text-lg text-gray-900">
+                            {{ $car->brand }} {{ $car->model }} ({{ $car->year }})
+                            @if ($car->status !== 'available')
+                                <span class="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded ml-1">{{ $car->status_label }}</span>
+                            @endif
+                        </h2>
                         @if ($car->engine)
                             <p class="text-gray-600 text-sm">Двигун: {{ $car->engine }}</p>
                         @endif

@@ -37,11 +37,15 @@
         <p class="mb-4">Статус: {{ $car->status_label }}</p>
 
         @auth
-            <div class="flex gap-3 mb-6">
-                <a href="{{ route('deals.create-rental', $car) }}" class="bg-blue-600 text-white px-4 py-2 rounded">Орендувати</a>
-                <a href="{{ route('deals.create-buyout', $car) }}" class="bg-green-600 text-white px-4 py-2 rounded">Викупити</a>
-                <a href="{{ route('deals.create-leasing', $car) }}" class="bg-purple-600 text-white px-4 py-2 rounded">Лізинг</a>
-            </div>
+            @if ($car->status === 'available')
+                <div class="flex gap-3 mb-6">
+                    <a href="{{ route('deals.create-rental', $car) }}" class="bg-blue-600 text-white px-4 py-2 rounded">Орендувати</a>
+                    <a href="{{ route('deals.create-buyout', $car) }}" class="bg-green-600 text-white px-4 py-2 rounded">Викупити</a>
+                    <a href="{{ route('deals.create-leasing', $car) }}" class="bg-purple-600 text-white px-4 py-2 rounded">Лізинг</a>
+                </div>
+            @else
+                <p class="mb-6 text-gray-600">Це авто зараз недоступне ({{ $car->status_label }}).</p>
+            @endif
         @else
             <div class="mb-6">
                 <a href="{{ route('login') }}" class="bg-blue-600 text-white px-4 py-2 rounded">Увійти, щоб орендувати</a>
