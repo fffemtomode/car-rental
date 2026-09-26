@@ -1,68 +1,71 @@
-<x-app-layout>
-    <div class="max-w-5xl mx-auto py-6 px-4">
-        <div class="flex justify-between items-center mb-4">
-            <h1 class="text-2xl font-bold text-gray-900">Управління автомобілями</h1>
-            <a href="{{ route('admin.cars.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded">Додати авто</a>
-        </div>
+<?php
 
-        @if (session('success'))
-        <div class="bg-green-100 text-green-700 p-3 rounded mb-4">{{ session('success') }}</div>
-        @endif
+namespace App\Models;
 
-        <table class="w-full border text-gray-900">
-            <thead>
-            <tr class="border-b bg-gray-100">
-                <th class="text-left p-2">Фото</th>
-                <th class="text-left p-2">Марка/Модель</th>
-                <th class="text-left p-2">Рік</th>
-                <th class="text-left p-2">Ціна/день</th>
-                <th class="text-left p-2">Статус</th>
-                <th class="text-left p-2">ТО</th>
-                <th class="text-left p-2"></th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach ($cars as $car)
-            <tr class="border-b">
-                <td class="p-2">
-                    @php $thumb = $car->photos->first()?->path ?? $car->photo; @endphp
-                    @if ($thumb)
-                    <img src="{{ Storage::url($thumb) }}" class="w-20 h-14 object-cover rounded">
-                    @else
-                    <div class="w-20 h-14 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">Немає</div>
-                    @endif
-                </td>
-                <td class="p-2">{{ $car->brand }} {{ $car->model }}</td>
-                <td class="p-2">{{ $car->year }}</td>
-                <td class="p-2">{{ $car->price_per_day }} грн</td>
-                <td class="p-2">{{ $car->status_label }}</td>
-                <td class="p-2">
-                    @if ($car->needsMaintenance())
-                    <span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">Потрібне ТО</span>
-                    @else
-                    <span class="text-xs text-gray-400">—</span>
-                    @endif
-                </td>
-                <td class="p-2">
-                    <div class="flex items-center gap-3">
-                        <a href="{{ route('admin.cars.calendar', $car) }}" class="text-green-700 hover:underline">Календар</a>
-                        <span class="text-gray-300">|</span>
-                        <a href="{{ route('admin.cars.edit', $car) }}" class="text-blue-600 hover:underline">Редагувати</a>
-                        <span class="text-gray-300">|</span>
-                        <a href="{{ route('admin.cars.maintenance', $car) }}" class="text-purple-600 hover:underline">ТО</a>
-                        <span class="text-gray-300">|</span>
-                        <form method="POST" action="{{ route('admin.cars.destroy', $car) }}" onsubmit="return confirm('Видалити авто?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:underline">Видалити</button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            @endforeach
-            </tbody>
-        </table>
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-        <div class="mt-4">{{ $cars->links() }}</div>
-    </div>
-</x-app-layout>
+class Car extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'brand', 'model', 'year', 'engine', 'mileage', 'color', 'plate_number', 'vin', 'price_per_day', 'buyout_price', 'status', 'photo',
+    ];
+
+    public function deals()
+    {
+        return $this->hasMany(Deal::class);
+    }
+
+    public function photos()
+    {
+        return $this->hasMany(CarPhoto::class)->orderBy('position');
+    }
+
+    public function maintenanceLogs()
+    {
+        return $this->hasMany(CarMaintenanceLog::class);
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return match ($this->status) {
+            'available' => 'Доступний',
+            'rented' => 'В оренді',
+            'sold' => 'Проданий',
+            'maintenance' => 'На обслуговуванні',
+            default => $this->status,
+        };
+    }
+
+    public function bookedDates(): array
+    {
+        $dates = [];
+
+        $this->deals()
+            ->where('type', 'rental')
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->get()
+            ->each(function ($deal) use (&$dates) {
+                $period = \Carbon\CarbonPeriod::create($deal->start_date, $deal->end_date);
+                foreach ($period as $date) {
+                    $dates[] = $date->format('Y-m-d');
+                }
+            });
+
+        return $dates;
+    }
+
+    public function needsMaintenance(): bool
+    {
+        if (!$this->mileage) {
+            return false;
+        }
+
+        $lastLog = $this->maintenanceLogs()->orderByDesc('mileage_at_service')->first();
+        $lastMileage = $lastLog?->mileage_at_service ?? 0;
+
+        return ($this->mileage - $lastMileage) >= 5000;
+    }
+}
