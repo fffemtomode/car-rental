@@ -10,7 +10,7 @@ class Deal extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'car_id', 'type', 'status', 'start_date', 'end_date', 'total_price', 'leasing_months',
+        'user_id', 'car_id', 'type', 'status', 'start_date', 'end_date', 'total_price', 'leasing_months', 'cancellation_reason',
     ];
 
     public function user()

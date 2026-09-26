@@ -144,7 +144,7 @@ class DealController extends Controller
         return redirect()->route('deals.show', $deal)->with('success', 'Угоду підтверджено, договір сформовано.');
     }
 
-    public function cancel(Deal $deal)
+    public function cancel(Request $request, Deal $deal)
     {
         if ($deal->user_id !== auth()->id()) {
             abort(403);
@@ -154,17 +154,23 @@ class DealController extends Controller
             return back()->withErrors(['status' => 'Цю угоду вже не можна скасувати.']);
         }
 
-        $deal->update(['status' => 'cancelled']);
+        $deal->update([
+            'status' => 'cancelled',
+            'cancellation_reason' => $request->input('reason'),
+        ]);
 
         return redirect()->route('deals.show', $deal)->with('success', 'Угоду скасовано.');
     }
 
-    public function reject(Deal $deal)
+    public function reject(Request $request, Deal $deal)
     {
-        $deal->update(['status' => 'cancelled']);
+        $deal->update([
+            'status' => 'cancelled',
+            'cancellation_reason' => $request->input('reason'),
+        ]);
 
         $deal->user->appNotifications()->create([
-            'message' => "Вашу заявку #{$deal->id} відхилено менеджером.",
+            'message' => "Вашу заявку #{$deal->id} відхилено менеджером." . ($request->input('reason') ? " Причина: {$request->input('reason')}" : ''),
             'type' => 'deal_rejected',
         ]);
 
