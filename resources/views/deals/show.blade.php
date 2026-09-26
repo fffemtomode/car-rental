@@ -46,20 +46,41 @@
             </table>
         @endif
 
-        @if ($deal->status === 'pending' && in_array(auth()->user()->role, ['manager', 'admin']))
-            <div class="flex gap-3 mt-4">
-                <form method="POST" action="{{ route('admin.deals.confirm', $deal) }}">
+            @if ($deal->status === 'pending' && in_array(auth()->user()->role, ['manager', 'admin']))
+                <div class="mt-4 space-y-3">
+                    <form method="POST" action="{{ route('admin.deals.confirm', $deal) }}" class="flex gap-2 items-start flex-wrap">
+                        @csrf
+                        @if ($deal->type === 'rental')
+                            <input type="number" name="mileage_start" placeholder="Пробіг на видачі (км)" class="border rounded px-3 py-2 text-sm">
+                        @endif
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Підтвердити угоду</button>
+                    </form>
+
+                    <form method="POST" action="{{ route('admin.deals.reject', $deal) }}" onsubmit="return confirm('Відхилити заявку?')" class="flex gap-2 items-start">
+                        @csrf
+                        <input type="text" name="reason" placeholder="Причина відхилення (необов'язково)" class="border rounded px-3 py-2 text-sm flex-1">
+                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded whitespace-nowrap">Відхилити</button>
+                    </form>
+                </div>
+            @elseif ($deal->status === 'pending')
+                <p class="mt-4 text-gray-600">Очікує підтвердження менеджером.</p>
+            @endif
+
+            @if ($deal->status === 'confirmed' && in_array(auth()->user()->role, ['manager', 'admin']))
+                <form method="POST" action="{{ route('admin.deals.complete', $deal) }}" class="mt-4 flex gap-2 items-start flex-wrap" onsubmit="return confirm('Завершити угоду?')">
                     @csrf
-                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Підтвердити угоду</button>
+                    <input type="number" name="mileage_end" placeholder="Пробіг на поверненні (км)" class="border rounded px-3 py-2 text-sm">
+                    <button type="submit" class="bg-green-700 text-white px-4 py-2 rounded whitespace-nowrap">Завершити угоду</button>
                 </form>
-                <form method="POST" action="{{ route('admin.deals.reject', $deal) }}" onsubmit="return confirm('Відхилити заявку?')">
-                    @csrf
-                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">Відхилити</button>
-                </form>
-            </div>
-        @elseif ($deal->status === 'pending')
-            <p class="mt-4 text-gray-600">Очікує підтвердження менеджером.</p>
-        @endif
+            @endif
+
+            @if ($deal->mileage_start || $deal->mileage_end)
+                <p class="mt-2 text-sm text-gray-600">
+                    Пробіг: {{ $deal->mileage_start ? number_format($deal->mileage_start, 0, '', ' ') . ' км на видачі' : '' }}
+                    @if ($deal->mileage_start && $deal->mileage_end) → @endif
+                    {{ $deal->mileage_end ? number_format($deal->mileage_end, 0, '', ' ') . ' км на поверненні' : '' }}
+                </p>
+            @endif
 
         @if (in_array($deal->status, ['pending', 'confirmed']) && $deal->user_id === auth()->id())
             <form method="POST" action="{{ route('deals.cancel', $deal) }}" class="mt-4" onsubmit="return confirm('Скасувати угоду?')">

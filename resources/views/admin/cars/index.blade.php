@@ -17,6 +17,7 @@
                 <th class="text-left p-2">Рік</th>
                 <th class="text-left p-2">Ціна/день</th>
                 <th class="text-left p-2">Статус</th>
+                <th class="text-left p-2">ТО</th>
                 <th class="text-left p-2"></th>
             </tr>
             </thead>

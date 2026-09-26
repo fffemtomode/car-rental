@@ -57,6 +57,8 @@ Route::middleware(['auth', 'manager'])->prefix('admin')->name('admin.')->group(f
     Route::get('/cars/{car}/calendar', [\App\Http\Controllers\Admin\CarCalendarController::class, 'index'])->name('cars.calendar');
     Route::delete('/cars/photos/{photo}', [CarAdminController::class, 'destroyPhoto'])->name('cars.photos.destroy');
     Route::post('/cars/photos/{photo}/move', [CarAdminController::class, 'movePhoto'])->name('cars.photos.move');
+
+    Route::post('/deals/{deal}/complete', [DealController::class, 'complete'])->name('deals.complete');
 });
 
 

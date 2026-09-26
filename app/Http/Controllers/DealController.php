@@ -120,9 +120,20 @@ class DealController extends Controller
         return redirect()->route('deals.show', $deal)->with('success', 'Заявку на лізинг створено, графік платежів сформовано.');
     }
 
-    public function confirm(Deal $deal)
+    public function confirm(Request $request, Deal $deal)
     {
-        $deal->update(['status' => 'confirmed']);
+        $updateData = ['status' => 'confirmed'];
+
+        if ($deal->type === 'rental' && $request->filled('mileage_start')) {
+            $updateData['mileage_start'] = $request->input('mileage_start');
+        }
+
+        $deal->update($updateData);
+
+        match ($deal->type) {
+            'rental', 'leasing' => $deal->car->update(['status' => 'rented']),
+            'buyout' => $deal->car->update(['status' => 'sold']),
+        };
 
         $pdf = Pdf::loadView('pdf.contract', ['deal' => $deal, 'car' => $deal->car]);
         $fileName = 'contract_' . $deal->id . '.pdf';
@@ -142,6 +153,31 @@ class DealController extends Controller
         ]);
 
         return redirect()->route('deals.show', $deal)->with('success', 'Угоду підтверджено, договір сформовано.');
+    }
+
+    public function complete(Request $request, Deal $deal)
+    {
+        $request->validate([
+            'mileage_end' => 'nullable|integer|min:0',
+        ]);
+
+        $deal->update([
+            'status' => 'completed',
+            'mileage_end' => $request->input('mileage_end'),
+        ]);
+
+        $updates = ['status' => 'available'];
+        if ($request->filled('mileage_end')) {
+            $updates['mileage'] = $request->input('mileage_end');
+        }
+        $deal->car->update($updates);
+
+        $deal->user->appNotifications()->create([
+            'message' => "Угоду #{$deal->id} завершено. Дякуємо за користування CarRental!",
+            'type' => 'deal_completed',
+        ]);
+
+        return redirect()->route('deals.show', $deal)->with('success', 'Угоду завершено.');
     }
 
     public function cancel(Request $request, Deal $deal)
