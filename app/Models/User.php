@@ -50,6 +50,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Deal::class);
     }
+
+    public function clientNotes()
+    {
+        return $this->hasMany(ClientNote::class, 'user_id');
+    }
+
     public function appNotifications()
     {
         return $this->hasMany(Notification::class, 'user_id');

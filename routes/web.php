@@ -59,6 +59,11 @@ Route::middleware(['auth', 'manager'])->prefix('admin')->name('admin.')->group(f
     Route::post('/cars/photos/{photo}/move', [CarAdminController::class, 'movePhoto'])->name('cars.photos.move');
 
     Route::post('/deals/{deal}/complete', [DealController::class, 'complete'])->name('deals.complete');
+
+    Route::get('/clients', [\App\Http\Controllers\Admin\ClientController::class, 'index'])->name('clients.index');
+    Route::get('/clients/{client}', [\App\Http\Controllers\Admin\ClientController::class, 'show'])->name('clients.show');
+    Route::post('/clients/{client}/notes', [\App\Http\Controllers\Admin\ClientController::class, 'storeNote'])->name('clients.notes.store');
+
 });
 
 

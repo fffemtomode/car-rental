@@ -28,6 +28,9 @@
                             <x-nav-link :href="route('admin.deals.index')" :active="request()->routeIs('admin.deals.*')">
                                 {{ __('Заявки') }}
                             </x-nav-link>
+                            <x-nav-link :href="route('admin.clients.index')" :active="request()->routeIs('admin.clients.*')">
+                                {{ __('Клієнти') }}
+                            </x-nav-link>
                         @endif
                     @endauth
                 </div>
@@ -128,6 +131,9 @@
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('admin.deals.index')" :active="request()->routeIs('admin.deals.*')">
                         {{ __('Заявки') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.clients.index')" :active="request()->routeIs('admin.clients.*')">
+                        {{ __('Клієнти') }}
                     </x-responsive-nav-link>
                 @endif
             @endauth
