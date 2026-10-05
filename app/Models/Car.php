@@ -68,4 +68,9 @@ class Car extends Model
 
         return ($this->mileage - $lastMileage) >= 5000;
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }

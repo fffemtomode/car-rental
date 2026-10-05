@@ -75,5 +75,41 @@
                 @include('partials.calendar-month', ['year' => $m->year, 'month' => $m->month, 'dateStatus' => $dateStatus])
             @endfor
         </div>
+        <h2 class="text-xl font-semibold mt-8 mb-3 text-gray-900">Відгуки</h2>
+
+        @php $approvedReviews = $car->reviews()->where('status', 'approved')->latest()->get(); @endphp
+
+        @if ($approvedReviews->isEmpty())
+            <p class="text-gray-600 text-sm mb-4">Відгуків про це авто ще немає.</p>
+        @else
+            <div class="space-y-3 mb-4">
+                @foreach ($approvedReviews as $review)
+                    <div class="border rounded p-3">
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium text-gray-900">{{ $review->user->name }}</span>
+                            <span class="text-yellow-500">{{ str_repeat('★', $review->rating) }}{{ str_repeat('☆', 5 - $review->rating) }}</span>
+                        </div>
+                        <p class="text-gray-700 text-sm mt-1">{{ $review->text }}</p>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+
+        @auth
+            <form method="POST" action="{{ route('reviews.store', $car) }}" class="border rounded-lg p-4">
+                @csrf
+                <h3 class="font-semibold text-gray-900 mb-2">Залишити відгук</h3>
+                <div class="mb-2">
+                    <select name="rating" class="border rounded px-3 py-2" required>
+                        <option value="">Оцінка</option>
+                        @for ($i = 5; $i >= 1; $i--)
+                            <option value="{{ $i }}">{{ $i }} {{ str_repeat('★', $i) }}</option>
+                        @endfor
+                    </select>
+                </div>
+                <textarea name="text" rows="3" class="border rounded px-3 py-2 w-full mb-2" placeholder="Твій відгук..." required></textarea>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Надіслати</button>
+            </form>
+        @endauth
     </div>
 </x-app-layout>

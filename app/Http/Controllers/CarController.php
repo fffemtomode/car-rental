@@ -21,7 +21,24 @@ class CarController extends Controller
             $query->where('price_per_day', '<=', $request->max_price);
         }
 
-        $cars = $query->orderByRaw("status = 'available' desc")->paginate(9);
+        if ($request->filled('available_from') && $request->filled('available_to')) {
+            $from = $request->available_from;
+            $to = $request->available_to;
+
+            $query->whereDoesntHave('deals', function ($q) use ($from, $to) {
+                $q->where('type', 'rental')
+                    ->whereIn('status', ['pending', 'confirmed'])
+                    ->where(function ($q2) use ($from, $to) {
+                        $q2->whereBetween('start_date', [$from, $to])
+                            ->orWhereBetween('end_date', [$from, $to])
+                            ->orWhere(function ($q3) use ($from, $to) {
+                                $q3->where('start_date', '<=', $from)->where('end_date', '>=', $to);
+                            });
+                    });
+            });
+        }
+
+        $cars = $query->orderByRaw("status = 'available' desc")->paginate(9)->withQueryString();
 
         return view('cars.index', compact('cars'));
     }

@@ -20,6 +20,9 @@ Route::get('/cars', [CarController::class, 'index'])->name('cars.index');
 Route::get('/cars/{car}', [CarController::class, 'show'])->name('cars.show');
 
 Route::middleware('auth')->group(function () {
+
+    Route::post('/cars/{car}/reviews', [\App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
+
     Route::get('/cars/{car}/rent', [DealController::class, 'createRental'])->name('deals.create-rental');
     Route::post('/cars/{car}/rent', [DealController::class, 'storeRental'])->name('deals.store-rental');
 
@@ -63,6 +66,10 @@ Route::middleware(['auth', 'manager'])->prefix('admin')->name('admin.')->group(f
     Route::get('/clients', [\App\Http\Controllers\Admin\ClientController::class, 'index'])->name('clients.index');
     Route::get('/clients/{client}', [\App\Http\Controllers\Admin\ClientController::class, 'show'])->name('clients.show');
     Route::post('/clients/{client}/notes', [\App\Http\Controllers\Admin\ClientController::class, 'storeNote'])->name('clients.notes.store');
+
+    Route::get('/reviews', [\App\Http\Controllers\Admin\ReviewController::class, 'index'])->name('reviews.index');
+    Route::post('/reviews/{review}/approve', [\App\Http\Controllers\Admin\ReviewController::class, 'approve'])->name('reviews.approve');
+    Route::post('/reviews/{review}/reject', [\App\Http\Controllers\Admin\ReviewController::class, 'reject'])->name('reviews.reject');
 
 });
 
