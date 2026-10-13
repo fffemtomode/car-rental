@@ -22,13 +22,13 @@
                         <td class="p-2">{{ $deal->type_label }}</td>
                         <td class="p-2">{{ $deal->status_label }}</td>
                         <td class="p-2">{{ $deal->total_price }} грн</td>
-                        <td class="p-2">
-                            <a href="{{ route('deals.show', $deal) }}" class="text-blue-600">Деталі</a>
-                        </td>
+                        <td class="p-2"><a href="{{ route('deals.show', $deal) }}" class="text-blue-600">Деталі</a></td>
                     </tr>
                 @endforeach
                 </tbody>
             </table>
+
+            <div class="mt-4">{{ $deals->links() }}</div>
         @endif
     </div>
 </x-app-layout>

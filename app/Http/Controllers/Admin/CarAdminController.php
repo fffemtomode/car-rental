@@ -8,9 +8,15 @@ use Illuminate\Http\Request;
 
 class CarAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $cars = Car::latest()->paginate(10);
+        $query = Car::latest();
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $cars = $query->paginate(10)->withQueryString();
         return view('admin.cars.index', compact('cars'));
     }
 
@@ -87,12 +93,12 @@ class CarAdminController extends Controller
         return redirect()->route('admin.cars.index')->with('success', 'Автомобіль оновлено.');
     }
 
-
     public function destroy(Car $car)
     {
         $car->delete();
         return redirect()->route('admin.cars.index')->with('success', 'Автомобіль видалено.');
     }
+
     public function destroyPhoto(\App\Models\CarPhoto $photo)
     {
         \Storage::disk('public')->delete($photo->path);
@@ -100,6 +106,7 @@ class CarAdminController extends Controller
 
         return back()->with('success', 'Фото видалено.');
     }
+
     public function movePhoto(Request $request, \App\Models\CarPhoto $photo)
     {
         $direction = $request->input('direction');

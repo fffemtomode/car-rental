@@ -37,14 +37,19 @@
         <p class="mb-4">Статус: {{ $car->status_label }}</p>
 
         @auth
-            @if ($car->status === 'available')
-                <div class="flex gap-3 mb-6">
+            <div class="flex gap-3 mb-6 flex-wrap">
+                @if (!in_array($car->status, ['sold', 'maintenance']))
                     <a href="{{ route('deals.create-rental', $car) }}" class="bg-blue-600 text-white px-4 py-2 rounded">Орендувати</a>
+                @endif
+                @if ($car->status === 'available')
                     <a href="{{ route('deals.create-buyout', $car) }}" class="bg-green-600 text-white px-4 py-2 rounded">Викупити</a>
                     <a href="{{ route('deals.create-leasing', $car) }}" class="bg-purple-600 text-white px-4 py-2 rounded">Лізинг</a>
-                </div>
-            @else
-                <p class="mb-6 text-gray-600">Це авто зараз недоступне ({{ $car->status_label }}).</p>
+                @endif
+            </div>
+            @if ($car->status === 'sold')
+                <p class="mb-6 text-gray-600">Це авто продано.</p>
+            @elseif ($car->status === 'maintenance')
+                <p class="mb-6 text-gray-600">Це авто зараз на обслуговуванні.</p>
             @endif
         @else
             <div class="mb-6">
@@ -75,6 +80,7 @@
                 @include('partials.calendar-month', ['year' => $m->year, 'month' => $m->month, 'dateStatus' => $dateStatus])
             @endfor
         </div>
+
         <h2 class="text-xl font-semibold mt-8 mb-3 text-gray-900">Відгуки</h2>
 
         @php $approvedReviews = $car->reviews()->where('status', 'approved')->latest()->get(); @endphp

@@ -20,6 +20,9 @@ class CarController extends Controller
         if ($request->filled('max_price')) {
             $query->where('price_per_day', '<=', $request->max_price);
         }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
 
         if ($request->filled('available_from') && $request->filled('available_to')) {
             $from = $request->available_from;

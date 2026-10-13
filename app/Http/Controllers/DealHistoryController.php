@@ -6,7 +6,7 @@ class DealHistoryController extends Controller
 {
     public function index()
     {
-        $deals = auth()->user()->deals()->with('car')->latest()->get();
+        $deals = auth()->user()->deals()->with('car')->latest()->paginate(10);
 
         return view('deals.history', compact('deals'));
     }

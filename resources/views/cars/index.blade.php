@@ -17,6 +17,15 @@
                         <label class="block text-sm text-gray-700 mb-1">Ціна до</label>
                         <input type="number" name="max_price" value="{{ request('max_price') }}" class="border rounded px-3 py-2 w-full">
                     </div>
+                    <div>
+                        <label class="block text-sm text-gray-700 mb-1">Статус</label>
+                        <select name="status" class="border rounded px-3 py-2 w-full">
+                            <option value="">Усі</option>
+                            <option value="available" @selected(request('status') === 'available')>Доступний</option>
+                            <option value="rented" @selected(request('status') === 'rented')>В оренді</option>
+                            <option value="sold" @selected(request('status') === 'sold')>Проданий</option>
+                        </select>
+                    </div>
                     <hr>
                     <div>
                         <label class="block text-sm text-gray-700 mb-1">Вільне з</label>
@@ -27,7 +36,7 @@
                         <input type="date" name="available_to" value="{{ request('available_to') }}" class="border rounded px-3 py-2 w-full">
                     </div>
                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded w-full">Застосувати</button>
-                    @if (request()->hasAny(['brand', 'min_price', 'max_price', 'available_from', 'available_to']))
+                    @if (request()->hasAny(['brand', 'min_price', 'max_price', 'status', 'available_from', 'available_to']))
                         <a href="{{ route('cars.index') }}" class="block text-center text-gray-600 text-sm">Скинути фільтр</a>
                     @endif
                 </form>

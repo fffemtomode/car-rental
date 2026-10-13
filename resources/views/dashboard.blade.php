@@ -7,14 +7,22 @@
 
     <div class="py-8">
         <div class="max-w-5xl mx-auto px-4">
+
             @if (in_array(auth()->user()->role, ['manager', 'admin']))
                 @php
+                    $today = now()->toDateString();
                     $pendingCount = \App\Models\Deal::where('status', 'pending')->count();
                     $carsCount = \App\Models\Car::count();
                     $availableCount = \App\Models\Car::where('status', 'available')->count();
-                    $rentedCars = \App\Models\Car::where('status', 'rented')->with(['deals' => function ($q) {
-                        $q->whereIn('status', ['confirmed'])->with('user')->latest();
-                    }])->get();
+                    $activeDeals = \App\Models\Deal::with(['car', 'user'])
+                        ->where('status', 'confirmed')
+                        ->where(function ($q) use ($today) {
+                            $q->where(function ($q2) use ($today) {
+                                $q2->where('type', 'rental')
+                                    ->where('start_date', '<=', $today)
+                                    ->where('end_date', '>=', $today);
+                            })->orWhere('type', 'leasing');
+                        })->get();
                     $needsMaintenanceCount = \App\Models\Car::all()->filter(fn ($c) => $c->needsMaintenance())->count();
                     $topCars = \App\Models\Car::withCount(['deals as rentals_count' => function ($q) {
                         $q->where('type', 'rental');
@@ -42,7 +50,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                     <div class="bg-white border rounded-lg p-4">
                         <h3 class="font-semibold text-gray-900 mb-3">Авто зараз в оренді/лізингу</h3>
-                        @if ($rentedCars->isEmpty())
+                        @if ($activeDeals->isEmpty())
                             <p class="text-gray-500 text-sm">Немає авто в оренді.</p>
                         @else
                             <table class="w-full text-sm text-gray-900">
@@ -54,12 +62,11 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach ($rentedCars as $rc)
-                                    @php $activeDeal = $rc->deals->first(); @endphp
+                                @foreach ($activeDeals as $ad)
                                     <tr class="border-b">
-                                        <td class="py-1">{{ $rc->brand }} {{ $rc->model }}</td>
-                                        <td class="py-1">{{ $activeDeal->user->name ?? '—' }}</td>
-                                        <td class="py-1">{{ $activeDeal->end_date ?? '—' }}</td>
+                                        <td class="py-1">{{ $ad->car->brand }} {{ $ad->car->model }}</td>
+                                        <td class="py-1">{{ $ad->user->name }}</td>
+                                        <td class="py-1">{{ $ad->end_date ?? 'лізинг' }}</td>
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -88,12 +95,11 @@
                     </div>
                 </div>
             @else
-
                 @php
-                    $activeDeals = auth()->user()->deals()->whereIn('status', ['pending', 'confirmed'])->count();
+                    $activeDealsCount = auth()->user()->deals()->whereIn('status', ['pending', 'confirmed'])->count();
                 @endphp
                 <div class="bg-white border rounded-lg p-6 mb-6">
-                    <p class="text-gray-900">У тебе <strong>{{ $activeDeals }}</strong> активних угод.</p>
+                    <p class="text-gray-900">У тебе <strong>{{ $activeDealsCount }}</strong> активних угод.</p>
                     <a href="{{ route('deals.history') }}" class="text-blue-600 hover:underline">Переглянути мої угоди →</a>
                 </div>
             @endif

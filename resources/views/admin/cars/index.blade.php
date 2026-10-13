@@ -9,6 +9,20 @@
             <div class="bg-green-100 text-green-700 p-3 rounded mb-4">{{ session('success') }}</div>
         @endif
 
+        <form method="GET" class="mb-4 flex gap-3">
+            <select name="status" class="border rounded px-3 py-2">
+                <option value="">Усі статуси</option>
+                <option value="available" @selected(request('status') === 'available')>Доступний</option>
+                <option value="rented" @selected(request('status') === 'rented')>В оренді</option>
+                <option value="sold" @selected(request('status') === 'sold')>Проданий</option>
+                <option value="maintenance" @selected(request('status') === 'maintenance')>На обслуговуванні</option>
+            </select>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Фільтрувати</button>
+            @if (request()->filled('status'))
+                <a href="{{ route('admin.cars.index') }}" class="text-gray-600 px-4 py-2">Скинути</a>
+            @endif
+        </form>
+
         <table class="w-full border text-gray-900">
             <thead>
             <tr class="border-b bg-gray-100">
@@ -37,6 +51,13 @@
                     <td class="p-2">{{ $car->price_per_day }} грн</td>
                     <td class="p-2">{{ $car->status_label }}</td>
                     <td class="p-2">
+                        @if ($car->needsMaintenance())
+                            <span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">Потрібне ТО</span>
+                        @else
+                            <span class="text-xs text-gray-400">—</span>
+                        @endif
+                    </td>
+                    <td class="p-2">
                         <div class="flex items-center gap-3">
                             <a href="{{ route('admin.cars.calendar', $car) }}" class="text-green-700 hover:underline">Календар</a>
                             <span class="text-gray-300">|</span>
@@ -49,7 +70,6 @@
                                 @method('DELETE')
                                 <button type="submit" class="text-red-600 hover:underline">Видалити</button>
                             </form>
-
                         </div>
                     </td>
                 </tr>

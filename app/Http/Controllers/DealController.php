@@ -28,7 +28,11 @@ class DealController extends Controller
             ->whereIn('status', ['pending', 'confirmed'])
             ->where(function ($query) use ($validated) {
                 $query->whereBetween('start_date', [$validated['start_date'], $validated['end_date']])
-                    ->orWhereBetween('end_date', [$validated['start_date'], $validated['end_date']]);
+                    ->orWhereBetween('end_date', [$validated['start_date'], $validated['end_date']])
+                    ->orWhere(function ($q) use ($validated) {
+                        $q->where('start_date', '<=', $validated['start_date'])
+                            ->where('end_date', '>=', $validated['end_date']);
+                    });
             })
             ->exists();
 
@@ -131,8 +135,9 @@ class DealController extends Controller
         $deal->update($updateData);
 
         match ($deal->type) {
-            'rental', 'leasing' => $deal->car->update(['status' => 'rented']),
+            'leasing' => $deal->car->update(['status' => 'rented']),
             'buyout' => $deal->car->update(['status' => 'sold']),
+            default => null,
         };
 
         $pdf = Pdf::loadView('pdf.contract', ['deal' => $deal, 'car' => $deal->car]);
@@ -148,6 +153,7 @@ class DealController extends Controller
         ]);
 
         $deal->user->appNotifications()->create([
+            'deal_id' => $deal->id,
             'message' => "Вашу угоду #{$deal->id} підтверджено, договір сформовано.",
             'type' => 'deal_confirmed',
         ]);
@@ -173,6 +179,7 @@ class DealController extends Controller
         $deal->car->update($updates);
 
         $deal->user->appNotifications()->create([
+            'deal_id' => $deal->id,
             'message' => "Угоду #{$deal->id} завершено. Дякуємо за користування CarRental!",
             'type' => 'deal_completed',
         ]);
@@ -206,6 +213,7 @@ class DealController extends Controller
         ]);
 
         $deal->user->appNotifications()->create([
+            'deal_id' => $deal->id,
             'message' => "Вашу заявку #{$deal->id} відхилено менеджером." . ($request->input('reason') ? " Причина: {$request->input('reason')}" : ''),
             'type' => 'deal_rejected',
         ]);
@@ -217,7 +225,8 @@ class DealController extends Controller
     {
         User::whereIn('role', ['manager', 'admin'])->get()->each(function ($manager) use ($deal) {
             $manager->appNotifications()->create([
-                'message' => "Нова заявка #{$deal->id} на {$deal->type} від {$deal->user->name}.",
+                'deal_id' => $deal->id,
+                'message' => "Нова заявка #{$deal->id} на {$deal->type_label} від {$deal->user->name}.",
                 'type' => 'new_deal',
             ]);
         });
