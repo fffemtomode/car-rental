@@ -10,10 +10,32 @@ class CarAdminController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Car::latest();
+        $query = Car::query();
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
+        }
+
+        if ($request->boolean('needs_maintenance')) {
+            $ids = Car::all()->filter(fn ($c) => $c->needsMaintenance())->pluck('id');
+            $query->whereIn('id', $ids);
+        }
+
+        switch ($request->input('sort')) {
+            case 'available_first':
+                $query->orderByRaw("status = 'available' desc")->latest();
+                break;
+            case 'maintenance_first':
+                $query->orderByRaw("(COALESCE(mileage,0) - COALESCE((SELECT MAX(mileage_at_service) FROM car_maintenance_logs WHERE car_maintenance_logs.car_id = cars.id),0)) DESC");
+                break;
+            case 'price_asc':
+                $query->orderBy('price_per_day');
+                break;
+            case 'price_desc':
+                $query->orderByDesc('price_per_day');
+                break;
+            default:
+                $query->latest();
         }
 
         $cars = $query->paginate(10)->withQueryString();

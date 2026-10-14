@@ -14,10 +14,9 @@
 </head>
 <body class="font-sans antialiased bg-gray-50 text-gray-900">
 
-<!-- Header -->
 <header class="bg-white border-b border-gray-100">
     <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-        <span class="text-2xl font-bold text-blue-600">CarRental</span>
+        <span class="text-2xl font-extrabold text-blue-600">🚗 CarRental</span>
 
         <nav class="flex items-center gap-4">
             @if (Route::has('login'))
@@ -26,7 +25,7 @@
                 @else
                     <a href="{{ route('login') }}" class="text-sm text-gray-700 hover:text-gray-900">Увійти</a>
                     @if (Route::has('register'))
-                        <a href="{{ route('register') }}" class="bg-blue-600 text-white text-sm px-4 py-2 rounded">Зареєструватись</a>
+                        <a href="{{ route('register') }}" class="bg-blue-600 text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-700">Зареєструватись</a>
                     @endif
                 @endauth
             @endif
@@ -34,8 +33,6 @@
     </div>
 </header>
 
-<!-- Hero -->
-<!-- Hero -->
 <section class="max-w-6xl mx-auto px-4 pt-16 pb-16 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
     <div class="text-center lg:text-left">
         <h1 class="text-5xl sm:text-6xl font-extrabold leading-tight mb-6">
@@ -66,28 +63,53 @@
     </div>
 </section>
 
-<!-- Features -->
-<section class="max-w-6xl mx-auto px-4 pb-24">
+<section class="max-w-6xl mx-auto px-4 pb-16">
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div class="bg-white border rounded-xl p-8">
+        <div class="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
             <h3 class="font-bold text-xl mb-3">Оренда</h3>
             <p class="text-gray-600">Обери авто та період — оплата тільки за дні користування.</p>
         </div>
-        <div class="bg-white border rounded-xl p-8">
+        <div class="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
             <h3 class="font-bold text-xl mb-3">Викуп</h3>
             <p class="text-gray-600">Переходь від оренди до повного володіння автомобілем.</p>
         </div>
-        <div class="bg-white border rounded-xl p-8">
+        <div class="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
             <h3 class="font-bold text-xl mb-3">Лізинг</h3>
             <p class="text-gray-600">Користуйся авто довгостроково, розділивши вартість на щомісячні платежі.</p>
         </div>
     </div>
 </section>
 
-<!-- Footer -->
-<footer class="border-t border-gray-100 py-6 text-center text-sm text-gray-500">
-    CarRental — курсовий проєкт, {{ date('Y') }}
-</footer>
+@php
+    $totalCars = \App\Models\Car::count();
+    $availableCars = \App\Models\Car::where('status', 'available')->count();
+    $rentedCars = \App\Models\Car::where('status', 'rented')->count();
+    $soldCars = \App\Models\Car::where('status', 'sold')->count();
+    $stats = [
+        ['label' => 'Доступні', 'value' => $availableCars, 'color' => 'bg-green-500'],
+        ['label' => 'В оренді/лізингу', 'value' => $rentedCars, 'color' => 'bg-blue-500'],
+        ['label' => 'Продані', 'value' => $soldCars, 'color' => 'bg-gray-400'],
+    ];
+@endphp
+<section class="max-w-4xl mx-auto px-4 pb-24">
+    <h2 class="text-2xl font-bold text-center mb-8">Наш автопарк зараз</h2>
+    <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-8 space-y-4">
+        @foreach ($stats as $stat)
+            <div>
+                <div class="flex justify-between text-sm mb-1">
+                    <span class="text-gray-700">{{ $stat['label'] }}</span>
+                    <span class="text-gray-900 font-medium">{{ $stat['value'] }}</span>
+                </div>
+                <div class="w-full bg-gray-100 rounded-full h-3">
+                    <div class="{{ $stat['color'] }} h-3 rounded-full" style="width: {{ $totalCars ? round($stat['value'] / $totalCars * 100) : 0 }}%"></div>
+                </div>
+            </div>
+        @endforeach
+        <p class="text-center text-gray-500 text-sm pt-2">Усього автомобілів у системі: {{ $totalCars }}</p>
+    </div>
+</section>
+
+@include('partials.footer')
 
 </body>
 </html>

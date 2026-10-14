@@ -58,27 +58,29 @@
                         </x-slot>
 
                         <x-slot name="content">
-                            @forelse (auth()->user()->appNotifications()->latest()->take(5)->get() as $notification)
-                                @php
-                                    $icon = match ($notification->type) {
-                                        'new_deal' => '🆕',
-                                        'deal_confirmed' => '✅',
-                                        'deal_rejected' => '❌',
-                                        'deal_completed' => '🏁',
-                                        default => '🔔',
-                                    };
-                                @endphp
-                                <a href="{{ $notification->deal_id ? route('deals.show', $notification->deal_id) : '#' }}"
-                                   class="flex gap-3 px-4 py-3 border-b hover:bg-gray-50 {{ $notification->read_at ? '' : 'bg-blue-50' }}">
-                                    <span class="text-lg leading-none">{{ $icon }}</span>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-sm {{ $notification->read_at ? 'text-gray-600' : 'text-gray-900 font-medium' }}">{{ $notification->message }}</p>
-                                        <p class="text-xs text-gray-400 mt-0.5">{{ $notification->created_at->diffForHumans() }}</p>
-                                    </div>
-                                </a>
-                            @empty
-                                <div class="px-4 py-6 text-sm text-gray-500 text-center">Немає сповіщень</div>
-                            @endforelse
+                            <div class="w-96">
+                                @forelse (auth()->user()->appNotifications()->latest()->take(5)->get() as $notification)
+                                    @php
+                                        $icon = match ($notification->type) {
+                                            'new_deal' => '🆕',
+                                            'deal_confirmed' => '✅',
+                                            'deal_rejected' => '❌',
+                                            'deal_completed' => '🏁',
+                                            default => '🔔',
+                                        };
+                                    @endphp
+                                    <a href="{{ $notification->deal_id ? route('deals.show', $notification->deal_id) : '#' }}"
+                                       class="flex gap-3 px-4 py-4 border-b hover:bg-gray-50 {{ $notification->read_at ? '' : 'bg-blue-50' }}">
+                                        <span class="text-xl leading-none">{{ $icon }}</span>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm {{ $notification->read_at ? 'text-gray-600' : 'text-gray-900 font-medium' }}">{{ $notification->message }}</p>
+                                            <p class="text-xs text-gray-400 mt-1">{{ $notification->created_at->diffForHumans() }}</p>
+                                        </div>
+                                    </a>
+                                @empty
+                                    <div class="px-4 py-8 text-sm text-gray-500 text-center">Поки немає сповіщень</div>
+                                @endforelse
+                            </div>
                         </x-slot>
                     </x-dropdown>
                 </div>

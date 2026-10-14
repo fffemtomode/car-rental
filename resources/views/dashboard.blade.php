@@ -37,14 +37,14 @@
                         <div class="text-3xl font-bold text-gray-900">{{ $carsCount }}</div>
                         <div class="text-gray-600 mt-1">Автомобілів у системі</div>
                     </a>
-                    <div class="bg-white border rounded-lg p-6">
+                    <a href="{{ route('admin.cars.index', ['status' => 'available']) }}" class="bg-white border rounded-lg p-6 hover:shadow">
                         <div class="text-3xl font-bold text-green-600">{{ $availableCount }}</div>
                         <div class="text-gray-600 mt-1">Доступні для оренди</div>
-                    </div>
-                    <div class="bg-white border rounded-lg p-6">
+                    </a>
+                    <a href="{{ route('admin.cars.index', ['needs_maintenance' => 1]) }}" class="bg-white border rounded-lg p-6 hover:shadow">
                         <div class="text-3xl font-bold text-red-600">{{ $needsMaintenanceCount }}</div>
                         <div class="text-gray-600 mt-1">Потребують ТО</div>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">

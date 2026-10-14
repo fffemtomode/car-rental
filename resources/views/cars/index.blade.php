@@ -47,24 +47,30 @@
                     <a href="{{ route('cars.show', $car) }}" class="border rounded-lg overflow-hidden hover:shadow-lg flex flex-col sm:flex-row">
                         <div class="sm:w-64 shrink-0 aspect-video sm:aspect-auto sm:h-40">
                             @if ($car->photos->count())
-                                <div x-data="{ active: 0, total: {{ $car->photos->count() }} }" class="relative mb-4">
+                                <div x-data="{ active: 0, total: {{ $car->photos->count() }} }" class="relative w-full h-full">
                                     @foreach ($car->photos as $i => $photo)
-                                        <img x-show="active === {{ $i }}" src="{{ Storage::url($photo->path) }}" class="w-full aspect-video object-cover rounded">
+                                        <img x-show="active === {{ $i }}" src="{{ Storage::url($photo->path) }}" class="w-full h-full object-cover">
                                     @endforeach
 
                                     @if ($car->photos->count() > 1)
                                         <button type="button" @click.stop.prevent="active = (active - 1 + total) % total" class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-9 h-9 flex items-center justify-center shadow">‹</button>
                                         <button type="button" @click.stop.prevent="active = (active + 1) % total" class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-9 h-9 flex items-center justify-center shadow">›</button>
 
-                                        <div class="flex justify-center gap-1 mt-2">
+                                        <div class="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
                                             @foreach ($car->photos as $i => $photo)
-                                                <button type="button" @click.stop.prevent="active = {{ $i }}" :class="active === {{ $i }} ? 'bg-blue-600' : 'bg-gray-300'" class="w-2 h-2 rounded-full"></button>
+                                                <button type="button" @click.stop.prevent="active = {{ $i }}" :class="active === {{ $i }} ? 'bg-white' : 'bg-white/50'" class="w-2 h-2 rounded-full"></button>
                                             @endforeach
                                         </div>
                                     @endif
                                 </div>
                             @elseif ($car->photo)
-                                <img src="{{ Storage::url($car->photo) }}" class="w-full aspect-video object-cover rounded mb-4">
+                                <img src="{{ Storage::url($car->photo) }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10">
+                                        <path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13v5a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H6v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5zm2.5 0h13l-1-3H6.5l-1 3zM6 16a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm12 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                                    </svg>
+                                </div>
                             @endif
                         </div>
                         <div class="p-4 flex-1">

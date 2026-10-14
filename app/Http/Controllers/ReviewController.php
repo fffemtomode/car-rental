@@ -1,35 +1,27 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Models\Car;
 use App\Models\Review;
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
-    public function index(Request $request)
+    public function store(Request $request, Car $car)
     {
-        $query = Review::with(['user', 'car'])->latest();
+        $validated = $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'text' => 'required|string|max:2000',
+        ]);
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
+        $car->reviews()->create([
+            'user_id' => auth()->id(),
+            'rating' => $validated['rating'],
+            'text' => $validated['text'],
+            'status' => 'pending',
+        ]);
 
-        $reviews = $query->paginate(15)->withQueryString();
-
-        return view('admin.reviews.index', compact('reviews'));
-    }
-
-    public function approve(Review $review)
-    {
-        $review->update(['status' => 'approved']);
-        return back()->with('success', 'Відгук опубліковано.');
-    }
-
-    public function reject(Review $review)
-    {
-        $review->update(['status' => 'rejected']);
-        return back()->with('success', 'Відгук відхилено.');
+        return back()->with('success', 'Дякуємо! Відгук буде опубліковано після перевірки модератором.');
     }
 }

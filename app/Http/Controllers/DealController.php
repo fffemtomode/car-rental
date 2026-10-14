@@ -152,6 +152,8 @@ class DealController extends Controller
             'signed_at' => now(),
         ]);
 
+        \App\Models\Notification::where('deal_id', $deal->id)->where('type', 'new_deal')->update(['type' => 'deal_confirmed']);
+
         $deal->user->appNotifications()->create([
             'deal_id' => $deal->id,
             'message' => "Вашу угоду #{$deal->id} підтверджено, договір сформовано.",
@@ -211,6 +213,8 @@ class DealController extends Controller
             'status' => 'cancelled',
             'cancellation_reason' => $request->input('reason'),
         ]);
+
+        \App\Models\Notification::where('deal_id', $deal->id)->where('type', 'new_deal')->update(['type' => 'deal_rejected']);
 
         $deal->user->appNotifications()->create([
             'deal_id' => $deal->id,
