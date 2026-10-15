@@ -66,48 +66,131 @@
 <section class="max-w-6xl mx-auto px-4 pb-16">
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div class="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
-            <h3 class="font-bold text-xl mb-3">Оренда</h3>
+            <h3 class="font-bold text-xl mb-3">1. Оренда</h3>
             <p class="text-gray-600">Обери авто та період — оплата тільки за дні користування.</p>
         </div>
         <div class="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
-            <h3 class="font-bold text-xl mb-3">Викуп</h3>
+            <h3 class="font-bold text-xl mb-3">2. Викуп</h3>
             <p class="text-gray-600">Переходь від оренди до повного володіння автомобілем.</p>
         </div>
         <div class="bg-white border border-gray-200 rounded-xl p-8 shadow-sm">
-            <h3 class="font-bold text-xl mb-3">Лізинг</h3>
+            <h3 class="font-bold text-xl mb-3">3. Лізинг</h3>
             <p class="text-gray-600">Користуйся авто довгостроково, розділивши вартість на щомісячні платежі.</p>
         </div>
     </div>
 </section>
 
+{{-- Справжня кругова діаграма (donut chart) --}}
 @php
     $totalCars = \App\Models\Car::count();
     $availableCars = \App\Models\Car::where('status', 'available')->count();
     $rentedCars = \App\Models\Car::where('status', 'rented')->count();
     $soldCars = \App\Models\Car::where('status', 'sold')->count();
-    $stats = [
-        ['label' => 'Доступні', 'value' => $availableCars, 'color' => 'bg-green-500'],
-        ['label' => 'В оренді/лізингу', 'value' => $rentedCars, 'color' => 'bg-blue-500'],
-        ['label' => 'Продані', 'value' => $soldCars, 'color' => 'bg-gray-400'],
+    $maintenanceCars = \App\Models\Car::where('status', 'maintenance')->count();
+
+    $segments = [
+        ['label' => 'Доступні', 'value' => $availableCars, 'color' => '#22c55e'],
+        ['label' => 'В оренді/лізингу', 'value' => $rentedCars, 'color' => '#3b82f6'],
+        ['label' => 'Продані', 'value' => $soldCars, 'color' => '#9ca3af'],
+        ['label' => 'На ТО', 'value' => $maintenanceCars, 'color' => '#f97316'],
     ];
+
+    $radius = 80;
+    $circumference = 2 * M_PI * $radius;
+    $cumulativeOffset = 0;
 @endphp
 <section class="max-w-4xl mx-auto px-4 pb-24">
     <h2 class="text-2xl font-bold text-center mb-8">Наш автопарк зараз</h2>
-    <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-8 space-y-4">
-        @foreach ($stats as $stat)
-            <div>
-                <div class="flex justify-between text-sm mb-1">
-                    <span class="text-gray-700">{{ $stat['label'] }}</span>
-                    <span class="text-gray-900 font-medium">{{ $stat['value'] }}</span>
-                </div>
-                <div class="w-full bg-gray-100 rounded-full h-3">
-                    <div class="{{ $stat['color'] }} h-3 rounded-full" style="width: {{ $totalCars ? round($stat['value'] / $totalCars * 100) : 0 }}%"></div>
-                </div>
+    <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-8 grid grid-cols-1 sm:grid-cols-2 gap-8 items-center">
+        <div class="flex justify-center">
+            <svg viewBox="0 0 200 200" class="w-56 h-56 -rotate-90">
+                <circle cx="100" cy="100" r="{{ $radius }}" fill="none" stroke="#f3f4f6" stroke-width="28"/>
+                @foreach ($segments as $segment)
+                    @php
+                        $fraction = $totalCars > 0 ? $segment['value'] / $totalCars : 0;
+                        $dash = $fraction * $circumference;
+                    @endphp
+                    @if ($segment['value'] > 0)
+                        <circle cx="100" cy="100" r="{{ $radius }}" fill="none" stroke="{{ $segment['color'] }}" stroke-width="28"
+                                stroke-dasharray="{{ $dash }} {{ $circumference - $dash }}"
+                                stroke-dashoffset="{{ -$cumulativeOffset }}" />
+                        @php $cumulativeOffset += $dash; @endphp
+                    @endif
+                @endforeach
+            </svg>
+        </div>
+        <div>
+            <div class="text-4xl font-extrabold text-gray-900 mb-1">{{ $totalCars }}</div>
+            <div class="text-gray-500 mb-5">автомобілів у системі</div>
+            <div class="space-y-2">
+                @foreach ($segments as $segment)
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full inline-block" style="background: {{ $segment['color'] }}"></span>
+                            <span class="text-gray-700">{{ $segment['label'] }}</span>
+                        </div>
+                        <span class="font-medium text-gray-900">{{ $segment['value'] }}</span>
+                    </div>
+                @endforeach
             </div>
-        @endforeach
-        <p class="text-center text-gray-500 text-sm pt-2">Усього автомобілів у системі: {{ $totalCars }}</p>
+        </div>
     </div>
 </section>
+
+{{-- Популярні авто --}}
+@php
+    $popularCars = \App\Models\Car::withCount(['deals as rentals_count' => function ($q) {
+        $q->where('type', 'rental');
+    }])->where('status', 'available')->orderByDesc('rentals_count')->take(3)->get();
+@endphp
+@if ($popularCars->isNotEmpty())
+    <section class="max-w-6xl mx-auto px-4 pb-24">
+        <h2 class="text-2xl font-bold text-center mb-8">Популярні автомобілі</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            @foreach ($popularCars as $car)
+                <a href="{{ route('cars.show', $car) }}" class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
+                    @php $thumb = $car->photos->first()?->path ?? $car->photo; @endphp
+                    @if ($thumb)
+                        <img src="{{ Storage::url($thumb) }}" class="w-full h-40 object-cover">
+                    @else
+                        <div class="w-full h-40 bg-gray-100 flex items-center justify-center text-gray-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-12 h-12">
+                                <path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13v5a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H6v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5zm2.5 0h13l-1-3H6.5l-1 3zM6 16a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm12 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                            </svg>
+                        </div>
+                    @endif
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-900">{{ $car->brand }} {{ $car->model }}</h3>
+                        <p class="text-gray-500 text-sm">{{ $car->year }} рік</p>
+                        <p class="text-blue-600 font-medium mt-2">{{ $car->price_per_day }} грн/добу</p>
+                    </div>
+                </a>
+            @endforeach
+        </div>
+    </section>
+@endif
+
+{{-- Відгуки --}}
+@php
+    $testimonials = \App\Models\Review::with(['user', 'car'])->where('status', 'approved')->latest()->take(3)->get();
+@endphp
+@if ($testimonials->isNotEmpty())
+    <section class="max-w-6xl mx-auto px-4 pb-24">
+        <h2 class="text-2xl font-bold text-center mb-8">Що кажуть клієнти</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            @foreach ($testimonials as $review)
+                <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                    <div class="text-yellow-500 mb-2">{{ str_repeat('★', $review->rating) }}{{ str_repeat('☆', 5 - $review->rating) }}</div>
+                    <p class="text-gray-700 text-sm mb-4">"{{ $review->text }}"</p>
+                    <p class="text-gray-900 font-medium text-sm">{{ $review->user->name }}</p>
+                    @if ($review->car)
+                        <p class="text-gray-400 text-xs">{{ $review->car->brand }} {{ $review->car->model }}</p>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+    </section>
+@endif
 
 @include('partials.footer')
 

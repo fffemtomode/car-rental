@@ -24,26 +24,28 @@
 
         <h2 class="font-semibold mb-3 text-gray-900">Заброньовані періоди</h2>
         @if ($periods->isEmpty())
-            <p class="text-gray-600">Активних бронювань немає.</p>
+            <div class="bg-white border border-gray-200 rounded-xl p-8 text-center text-gray-500">Активних бронювань немає.</div>
         @else
-            <table class="w-full border text-gray-900">
-                <thead>
-                <tr class="border-b bg-gray-100">
-                    <th class="text-left p-2">Клієнт</th>
-                    <th class="text-left p-2">Період</th>
-                    <th class="text-left p-2">Статус</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach ($periods as $deal)
-                    <tr class="border-b">
-                        <td class="p-2">{{ $deal->user->name }}</td>
-                        <td class="p-2">{{ $deal->start_date }} — {{ $deal->end_date }}</td>
-                        <td class="p-2">{{ $deal->status_label }}</td>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <table class="w-full text-gray-900">
+                    <thead>
+                    <tr class="bg-gray-50 border-b-2 border-gray-200">
+                        <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Клієнт</th>
+                        <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Період</th>
+                        <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Статус</th>
                     </tr>
-                @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    @foreach ($periods as $deal)
+                        <tr class="border-b border-gray-100 last:border-0">
+                            <td class="px-4 py-3">{{ $deal->user->name }}</td>
+                            <td class="px-4 py-3">{{ $deal->start_date }} — {{ $deal->end_date }}</td>
+                            <td class="px-4 py-3">{{ $deal->status_label }}</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
         @endif
     </div>
 </x-app-layout>

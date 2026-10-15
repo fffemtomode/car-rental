@@ -12,7 +12,7 @@
         </div>
 
         <form method="GET" class="mb-4 flex flex-wrap gap-3">
-            <select name="status" class="border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-900 text-sm">
+            <select name="status" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[180px]">
                 <option value="">Усі статуси</option>
                 <option value="pending" @selected(request('status') === 'pending')>Очікує підтвердження</option>
                 <option value="confirmed" @selected(request('status') === 'confirmed')>Підтверджено</option>
@@ -20,14 +20,14 @@
                 <option value="cancelled" @selected(request('status') === 'cancelled')>Скасовано</option>
             </select>
 
-            <select name="type" class="border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-900 text-sm">
+            <select name="type" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[140px]">
                 <option value="">Усі типи</option>
                 <option value="rental" @selected(request('type') === 'rental')>Оренда</option>
                 <option value="buyout" @selected(request('type') === 'buyout')>Викуп</option>
                 <option value="leasing" @selected(request('type') === 'leasing')>Лізинг</option>
             </select>
 
-            <select name="car_id" class="border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-900 text-sm">
+            <select name="car_id" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[160px]">
                 <option value="">Усі авто</option>
                 @foreach ($cars as $carOption)
                     <option value="{{ $carOption->id }}" @selected((string) request('car_id') === (string) $carOption->id)>{{ $carOption->brand }} {{ $carOption->model }}</option>

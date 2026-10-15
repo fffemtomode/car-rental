@@ -10,7 +10,7 @@
         @endif
 
         <form method="GET" class="mb-4 flex flex-wrap gap-3">
-            <select name="status" class="border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-900 text-sm">
+            <select name="status" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[180px]">
                 <option value="">Усі статуси</option>
                 <option value="available" @selected(request('status') === 'available')>Доступний</option>
                 <option value="rented" @selected(request('status') === 'rented')>В оренді</option>
@@ -18,7 +18,7 @@
                 <option value="maintenance" @selected(request('status') === 'maintenance')>На обслуговуванні</option>
             </select>
 
-            <select name="sort" class="border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-900 text-sm">
+            <select name="sort" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[220px]">
                 <option value="">Сортування за замовчуванням</option>
                 <option value="available_first" @selected(request('sort') === 'available_first')>Спочатку доступні</option>
                 <option value="maintenance_first" @selected(request('sort') === 'maintenance_first')>Спочатку потребують ТО</option>
@@ -73,7 +73,7 @@
                         </td>
                         <td class="px-4 py-3">
                             @if ($car->needsMaintenance())
-                                <span class="text-xs font-medium bg-red-100 text-red-700 px-2 py-1 rounded-full">Потрібне ТО</span>
+                                <span class="text-xs font-medium bg-red-100 text-red-700 px-2 py-1 rounded-full whitespace-nowrap">Потрібне ТО</span>
                             @else
                                 <span class="text-xs text-gray-400">—</span>
                             @endif
