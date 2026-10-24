@@ -105,6 +105,13 @@
             </div>
         @endif
 
+        @php
+            $showActionsBlock = $deal->status === 'pending'
+                || $deal->status === 'confirmed'
+                || ($deal->status === 'cancelled' && $deal->cancellation_reason)
+                || $deal->contract;
+        @endphp
+        @if ($showActionsBlock)
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 space-y-3">
             @if ($deal->status === 'pending' && in_array(auth()->user()->role, ['manager', 'admin']))
                 <form method="POST" action="{{ route('admin.deals.confirm', $deal) }}" class="flex gap-2 items-start flex-wrap">
@@ -150,5 +157,6 @@
                 </a>
             @endif
         </div>
+        @endif
     </div>
 </x-app-layout>
