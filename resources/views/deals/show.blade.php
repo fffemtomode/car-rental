@@ -1,4 +1,4 @@
-<x-app-layout>
+﻿<x-app-layout>
     <div class="max-w-2xl mx-auto py-6 px-4">
         @if (session('success'))
             <div class="bg-green-100 text-green-700 p-3 rounded-lg mb-4">{{ session('success') }}</div>
@@ -65,14 +65,16 @@
                             <div class="text-gray-900 font-medium">{{ $deal->total_price }} грн</div>
                         </div>
                     @endif
-                    @if ($deal->mileage_start || $deal->mileage_end)
+                    @if ($deal->mileage_start)
                         <div>
                             <div class="text-gray-400">Пробіг на видачі</div>
-                            <div class="text-gray-900 font-medium">{{ $deal->mileage_start ? number_format($deal->mileage_start, 0, '', ' ') . ' км' : '—' }}</div>
+                            <div class="text-gray-900 font-medium">{{ number_format($deal->mileage_start, 0, '', ' ') }} км</div>
                         </div>
+                    @endif
+                    @if ($deal->mileage_end)
                         <div>
                             <div class="text-gray-400">Пробіг на поверненні</div>
-                            <div class="text-gray-900 font-medium">{{ $deal->mileage_end ? number_format($deal->mileage_end, 0, '', ' ') . ' км' : '—' }}</div>
+                            <div class="text-gray-900 font-medium">{{ number_format($deal->mileage_end, 0, '', ' ') }} км</div>
                         </div>
                     @endif
                 </div>
@@ -93,7 +95,7 @@
                     <tbody>
                     @foreach ($deal->leasingSchedules as $schedule)
                         <tr class="border-b border-gray-100 last:border-0">
-                            <td class="px-4 py-2">{{ $schedule->payment_date }}</td>
+                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($schedule->payment_date)->format('d.m.Y') }}</td>
                             <td class="px-4 py-2">{{ $schedule->amount }} грн</td>
                             <td class="px-4 py-2">{{ $schedule->status }}</td>
                         </tr>

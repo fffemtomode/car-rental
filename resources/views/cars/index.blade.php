@@ -45,7 +45,7 @@
             <div class="flex-1 flex flex-col gap-4">
                 @forelse ($cars as $car)
                     <a href="{{ route('cars.show', $car) }}" class="border rounded-lg overflow-hidden hover:shadow-lg flex flex-col sm:flex-row">
-                        <div class="sm:w-64 shrink-0 aspect-video sm:aspect-auto sm:h-40">
+                        <div class="sm:w-64 shrink-0 aspect-video sm:aspect-auto sm:h-40 border-r border-gray-100">
                             @if ($car->photos->count())
                                 <div x-data="{ active: 0, total: {{ $car->photos->count() }} }" class="relative w-full h-full">
                                     @foreach ($car->photos as $i => $photo)

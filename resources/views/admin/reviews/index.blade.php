@@ -21,33 +21,36 @@
         @else
             <div class="space-y-3">
                 @foreach ($reviews as $review)
-                    <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span class="font-medium text-gray-900">{{ $review->user->name }}</span>
-                                @if ($review->car)
-                                    <span class="text-gray-500 text-sm"> — {{ $review->car->brand }} {{ $review->car->model }}</span>
-                                @endif
-                                <span class="text-yellow-500 ml-2">{{ str_repeat('★', $review->rating) }}{{ str_repeat('☆', 5 - $review->rating) }}</span>
+                    <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex gap-3">
+                        @include('partials.avatar', ['name' => $review->user->name])
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <span class="font-medium text-gray-900">{{ $review->user->name }}</span>
+                                    @if ($review->car)
+                                        <span class="text-gray-500 text-sm"> — {{ $review->car->brand }} {{ $review->car->model }}</span>
+                                    @endif
+                                    <span class="text-yellow-500 ml-2">{{ str_repeat('★', $review->rating) }}{{ str_repeat('☆', 5 - $review->rating) }}</span>
+                                </div>
+                                <span class="text-xs font-medium px-2 py-1 rounded-full {{ $review->status === 'approved' ? 'bg-green-100 text-green-700' : ($review->status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-800') }}">
+                                    {{ $review->status_label }}
+                                </span>
                             </div>
-                            <span class="text-xs font-medium px-2 py-1 rounded-full {{ $review->status === 'approved' ? 'bg-green-100 text-green-700' : ($review->status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-800') }}">
-                                {{ $review->status_label }}
-                            </span>
-                        </div>
-                        <p class="text-gray-700 text-sm mt-2">{{ $review->text }}</p>
+                            <p class="text-gray-700 text-sm mt-2">{{ $review->text }}</p>
 
-                        @if ($review->status === 'pending')
-                            <div class="flex gap-3 mt-3">
-                                <form method="POST" action="{{ route('admin.reviews.approve', $review) }}">
-                                    @csrf
-                                    <button type="submit" class="text-green-700 text-sm font-medium hover:underline">Опублікувати</button>
-                                </form>
-                                <form method="POST" action="{{ route('admin.reviews.reject', $review) }}">
-                                    @csrf
-                                    <button type="submit" class="text-red-600 text-sm font-medium hover:underline">Відхилити</button>
-                                </form>
-                            </div>
-                        @endif
+                            @if ($review->status === 'pending')
+                                <div class="flex gap-3 mt-3">
+                                    <form method="POST" action="{{ route('admin.reviews.approve', $review) }}">
+                                        @csrf
+                                        <button type="submit" class="text-green-700 text-sm font-medium hover:underline">Опублікувати</button>
+                                    </form>
+                                    <form method="POST" action="{{ route('admin.reviews.reject', $review) }}">
+                                        @csrf
+                                        <button type="submit" class="text-red-600 text-sm font-medium hover:underline">Відхилити</button>
+                                    </form>
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 @endforeach
             </div>

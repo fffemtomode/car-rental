@@ -51,7 +51,7 @@
                         <td class="px-4 py-3">
                             @php $thumb = $car->photos->first()?->path ?? $car->photo; @endphp
                             @if ($thumb)
-                                <img src="{{ Storage::url($thumb) }}" class="w-20 h-14 object-cover rounded-lg">
+                                <img src="{{ Storage::url($thumb) }}" class="w-20 h-14 object-cover rounded-lg border border-gray-200">
                             @else
                                 <div class="w-20 h-14 bg-gray-100 rounded-lg flex items-center justify-center text-gray-300">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">

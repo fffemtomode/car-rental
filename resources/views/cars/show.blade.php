@@ -3,7 +3,7 @@
         <h1 class="text-2xl font-bold mb-4">{{ $car->brand }} {{ $car->model }} ({{ $car->year }})</h1>
 
         @if ($car->photos->count())
-            <div x-data="{ active: 0, total: {{ $car->photos->count() }} }" class="relative mb-4 rounded-xl overflow-hidden shadow-sm">
+            <div x-data="{ active: 0, total: {{ $car->photos->count() }} }" class="relative mb-4 rounded-xl overflow-hidden shadow-sm border border-gray-200">
                 @foreach ($car->photos as $i => $photo)
                     <img x-show="active === {{ $i }}" src="{{ Storage::url($photo->path) }}" class="w-full aspect-video object-cover">
                 @endforeach
@@ -20,9 +20,9 @@
                 @endif
             </div>
         @elseif ($car->photo)
-            <img src="{{ Storage::url($car->photo) }}" class="w-full aspect-video object-cover rounded-xl mb-4 shadow-sm">
+            <img src="{{ Storage::url($car->photo) }}" class="w-full aspect-video object-cover rounded-xl mb-4 shadow-sm border border-gray-200">
         @else
-            <div class="w-full aspect-video bg-gray-100 rounded-xl mb-4 flex items-center justify-center text-gray-300">
+            <div class="w-full aspect-video bg-gray-100 rounded-xl mb-4 flex items-center justify-center text-gray-300 border border-gray-200">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-16 h-16">
                     <path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13v5a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H6v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5zm2.5 0h13l-1-3H6.5l-1 3zM6 16a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm12 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
                 </svg>
@@ -112,12 +112,15 @@
         @else
             <div class="space-y-3 mb-4">
                 @foreach ($approvedReviews as $review)
-                    <div class="bg-white border border-gray-200 rounded-lg p-3">
-                        <div class="flex items-center gap-2">
-                            <span class="font-medium text-gray-900">{{ $review->user->name }}</span>
-                            <span class="text-yellow-500">{{ str_repeat('★', $review->rating) }}{{ str_repeat('☆', 5 - $review->rating) }}</span>
+                    <div class="bg-white border border-gray-200 rounded-lg p-3 flex gap-3">
+                        @include('partials.avatar', ['name' => $review->user->name])
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-medium text-gray-900">{{ $review->user->name }}</span>
+                                <span class="text-yellow-500">{{ str_repeat('★', $review->rating) }}{{ str_repeat('☆', 5 - $review->rating) }}</span>
+                            </div>
+                            <p class="text-gray-700 text-sm mt-1">{{ $review->text }}</p>
                         </div>
-                        <p class="text-gray-700 text-sm mt-1">{{ $review->text }}</p>
                     </div>
                 @endforeach
             </div>
