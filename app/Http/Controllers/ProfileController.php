@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,19 +12,24 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
     public function edit(Request $request): View
     {
+        $contactSettings = null;
+
+        if (in_array($request->user()->role, ['manager', 'admin'])) {
+            $contactSettings = [
+                'telegram_link' => Setting::get('telegram_link', 'https://t.me/your_username'),
+                'viber_number' => Setting::get('viber_number', '+380000000000'),
+                'contact_phone' => Setting::get('contact_phone', '+380 00 000 00 00'),
+            ];
+        }
+
         return view('profile.edit', [
             'user' => $request->user(),
+            'contactSettings' => $contactSettings,
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $validated = $request->validated();
@@ -40,9 +46,6 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
-    /**
-     * Delete the user's account.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [

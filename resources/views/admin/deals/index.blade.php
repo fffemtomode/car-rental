@@ -41,10 +41,11 @@
 
             <div>
                 <label class="block text-xs text-gray-500 mb-1">Авто</label>
-                <select name="car_id" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[160px]">
+                <select name="car" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[160px]">
                     <option value="">Усі авто</option>
                     @foreach ($cars as $carOption)
-                        <option value="{{ $carOption->id }}" @selected((string) request('car_id') === (string) $carOption->id)>{{ $carOption->brand }} {{ $carOption->model }}</option>
+                        @php $carValue = $carOption->brand . '|' . $carOption->model; @endphp
+                        <option value="{{ $carValue }}" @selected(request('car') === $carValue)>{{ $carOption->brand }} {{ $carOption->model }}</option>
                     @endforeach
                 </select>
             </div>
@@ -58,11 +59,22 @@
                 <input type="date" name="date_to" value="{{ request('date_to') }}" class="border border-gray-300 rounded-lg px-3 py-2 bg-white text-sm">
             </div>
 
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Фільтрувати</button>
-            @if (request()->hasAny(['status', 'type', 'car_id', 'date_from', 'date_to']))
-                <a href="{{ route('admin.deals.index') }}" class="text-gray-600 px-2 py-2">Скинути</a>
+            <div>
+                <label class="block text-xs text-gray-500 mb-1 invisible">.</label>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Фільтрувати</button>
+            </div>
+
+            @if (request()->hasAny(['status', 'type', 'car', 'date_from', 'date_to']))
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1 invisible">.</label>
+                    <a href="{{ route('admin.deals.index') }}" class="inline-block text-gray-600 px-2 py-2">Скинути</a>
+                </div>
             @endif
-            <a href="{{ route('admin.deals.export', request()->query()) }}" class="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800 ml-auto">⬇ Експорт в Excel</a>
+
+            <div>
+                <label class="block text-xs text-gray-500 mb-1 invisible">.</label>
+                <a href="{{ route('admin.deals.export', request()->query()) }}" class="inline-block bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800">⬇ Експорт в Excel</a>
+            </div>
         </form>
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
