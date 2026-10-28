@@ -36,11 +36,11 @@
                         @csrf
                         <div class="mb-4">
                             <label class="block mb-1 text-gray-900 text-sm font-medium">Дата початку</label>
-                            <input type="date" name="start_date" class="border border-gray-300 rounded-lg px-3 py-2 w-full" required>
+                            <input type="date" name="start_date" class="border border-gray-300 rounded-lg px-3 py-2 w-full bg-white" required>
                         </div>
                         <div class="mb-4">
                             <label class="block mb-1 text-gray-900 text-sm font-medium">Дата завершення</label>
-                            <input type="date" name="end_date" class="border border-gray-300 rounded-lg px-3 py-2 w-full" required>
+                            <input type="date" name="end_date" class="border border-gray-300 rounded-lg px-3 py-2 w-full bg-white" required>
                         </div>
                         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Підтвердити заявку</button>
                     </form>

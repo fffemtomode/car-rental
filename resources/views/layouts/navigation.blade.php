@@ -34,6 +34,9 @@
                             <x-nav-link :href="route('admin.reviews.index')" :active="request()->routeIs('admin.reviews.*')">
                                 {{ __('Відгуки') }}
                             </x-nav-link>
+                                <x-nav-link :href="route('admin.settings.edit')" :active="request()->routeIs('admin.settings.*')">
+                                    {{ __('Налаштування') }}
+                                </x-nav-link>
                         @endif
                     @endauth
                 </div>
@@ -157,6 +160,9 @@
                     <x-responsive-nav-link :href="route('admin.reviews.index')" :active="request()->routeIs('admin.reviews.*')">
                         {{ __('Відгуки') }}
                     </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('admin.settings.edit')" :active="request()->routeIs('admin.settings.*')">
+                            {{ __('Налаштування') }}
+                        </x-responsive-nav-link>
                 @endif
             @endauth
         </div>

@@ -55,6 +55,77 @@
                     </a>
                 @endif
 
+                @php
+                    $monthlyDeals = [];
+                    for ($i = 5; $i >= 0; $i--) {
+                        $monthStart = now()->subMonths($i)->startOfMonth();
+                        $monthEnd = now()->subMonths($i)->endOfMonth();
+                        $monthlyDeals[] = [
+                            'label' => $monthStart->translatedFormat('M'),
+                            'count' => \App\Models\Deal::whereBetween('created_at', [$monthStart, $monthEnd])->whereIn('status', ['confirmed', 'completed'])->count(),
+                        ];
+                    }
+                    $maxMonthCount = max(1, collect($monthlyDeals)->max('count'));
+
+                    $revenueByType = [
+                        ['label' => 'Оренда', 'value' => \App\Models\Deal::where('type', 'rental')->whereIn('status', ['confirmed', 'completed'])->sum('total_price'), 'color' => '#3b82f6'],
+                        ['label' => 'Викуп', 'value' => \App\Models\Deal::where('type', 'buyout')->whereIn('status', ['confirmed', 'completed'])->sum('total_price'), 'color' => '#22c55e'],
+                        ['label' => 'Лізинг', 'value' => \App\Models\Deal::where('type', 'leasing')->whereIn('status', ['confirmed', 'completed'])->sum('total_price'), 'color' => '#a855f7'],
+                    ];
+                    $totalRevenue = collect($revenueByType)->sum('value');
+                    $radius = 70;
+                    $circumference = 2 * M_PI * $radius;
+                    $cumOffset = 0;
+                @endphp
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-white border rounded-lg p-4">
+                        <h3 class="font-semibold text-gray-900 mb-4">Підтверджені угоди за 6 місяців</h3>
+                        <div class="flex items-end justify-between gap-2 h-32">
+                            @foreach ($monthlyDeals as $md)
+                                <div class="flex-1 flex flex-col items-center justify-end h-full">
+                                    <span class="text-xs text-gray-500 mb-1">{{ $md['count'] }}</span>
+                                    <div class="w-full bg-blue-500 rounded-t" style="height: {{ $md['count'] > 0 ? max(6, round($md['count'] / $maxMonthCount * 100)) : 2 }}%"></div>
+                                    <span class="text-xs text-gray-400 mt-1">{{ $md['label'] }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="bg-white border rounded-lg p-4">
+                        <h3 class="font-semibold text-gray-900 mb-4">Дохід за типом угод</h3>
+                        @if ($totalRevenue > 0)
+                            <div class="flex items-center gap-6">
+                                <svg viewBox="0 0 160 160" class="w-32 h-32 -rotate-90 shrink-0">
+                                    <circle cx="80" cy="80" r="{{ $radius }}" fill="none" stroke="#f3f4f6" stroke-width="22"/>
+                                    @foreach ($revenueByType as $rt)
+                                        @php
+                                            $fraction = $totalRevenue > 0 ? $rt['value'] / $totalRevenue : 0;
+                                            $dash = $fraction * $circumference;
+                                        @endphp
+                                        @if ($rt['value'] > 0)
+                                            <circle cx="80" cy="80" r="{{ $radius }}" fill="none" stroke="{{ $rt['color'] }}" stroke-width="22"
+                                                    stroke-dasharray="{{ $dash }} {{ $circumference - $dash }}"
+                                                    stroke-dashoffset="{{ -$cumOffset }}" />
+                                            @php $cumOffset += $dash; @endphp
+                                        @endif
+                                    @endforeach
+                                </svg>
+                                <div class="space-y-2 text-sm">
+                                    @foreach ($revenueByType as $rt)
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-3 h-3 rounded-full inline-block" style="background: {{ $rt['color'] }}"></span>
+                                            <span class="text-gray-700">{{ $rt['label'] }}:</span>
+                                            <span class="font-medium text-gray-900">{{ number_format($rt['value'], 0, '', ' ') }} грн</span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @else
+                            <p class="text-gray-500 text-sm">Поки немає даних для діаграми.</p>
+                        @endif
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                     <div class="bg-white border rounded-lg p-4">
                         <h3 class="font-semibold text-gray-900 mb-3">Авто зараз в оренді/лізингу</h3>

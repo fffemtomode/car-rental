@@ -26,7 +26,14 @@
                         <tr class="border-b border-gray-100 last:border-0 hover:bg-gray-50">
                             <td class="px-4 py-3">{{ $deal->car->brand }} {{ $deal->car->model }}</td>
                             <td class="px-4 py-3">{{ $deal->type_label }}</td>
-                            <td class="px-4 py-3">{{ $deal->status_label }}</td>
+                            <td class="px-4 py-3">
+                                    <span class="text-xs font-medium px-2 py-1 rounded-full
+                                        {{ $deal->status === 'pending' ? 'bg-amber-100 text-amber-800' :
+                                           ($deal->status === 'confirmed' ? 'bg-blue-100 text-blue-700' :
+                                           ($deal->status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600')) }}">
+                                        {{ $deal->status_label }}
+                                    </span>
+                            </td>
                             <td class="px-4 py-3">{{ $deal->total_price }} грн</td>
                             <td class="px-4 py-3"><a href="{{ route('deals.show', $deal) }}" class="text-blue-600 hover:underline">Деталі</a></td>
                         </tr>

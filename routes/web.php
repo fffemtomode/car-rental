@@ -52,6 +52,8 @@ Route::middleware(['auth', 'manager'])->prefix('admin')->name('admin.')->group(f
     Route::get('/deals', [DealAdminController::class, 'index'])->name('deals.index');
     Route::post('/deals/{deal}/confirm', [DealController::class, 'confirm'])->name('deals.confirm');
 
+    Route::get('/deals/export', [DealAdminController::class, 'export'])->name('deals.export');
+
     Route::get('/cars/{car}/maintenance', [\App\Http\Controllers\Admin\CarMaintenanceController::class, 'index'])->name('cars.maintenance');
     Route::post('/cars/{car}/maintenance', [\App\Http\Controllers\Admin\CarMaintenanceController::class, 'store'])->name('cars.maintenance.store');
 
@@ -71,6 +73,8 @@ Route::middleware(['auth', 'manager'])->prefix('admin')->name('admin.')->group(f
     Route::post('/reviews/{review}/approve', [\App\Http\Controllers\Admin\ReviewController::class, 'approve'])->name('reviews.approve');
     Route::post('/reviews/{review}/reject', [\App\Http\Controllers\Admin\ReviewController::class, 'reject'])->name('reviews.reject');
 
+    Route::get('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'edit'])->name('settings.edit');
+    Route::post('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
 });
 
 

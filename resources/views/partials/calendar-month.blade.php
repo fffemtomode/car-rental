@@ -4,7 +4,7 @@
     $daysInMonth = $firstDay->daysInMonth;
     $startWeekday = $firstDay->dayOfWeekIso;
 @endphp
-<div class="border rounded-lg p-4">
+<div class="border rounded-lg p-4 bg-white">
     <h3 class="font-semibold mb-3 text-gray-900 text-center">{{ $monthsUk[$month - 1] }} {{ $year }}</h3>
     <div class="grid grid-cols-7 gap-1 text-xs text-center text-gray-500 mb-1">
         <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Нд</div>

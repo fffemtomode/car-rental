@@ -21,6 +21,9 @@ class DealController extends Controller
         $validated = $request->validate([
             'start_date' => 'required|date|after_or_equal:today',
             'end_date' => 'required|date|after:start_date',
+        ], [
+            'start_date.after_or_equal' => 'Дата початку не може бути раніше сьогоднішньої.',
+            'end_date.after' => 'Дата завершення має бути пізніше за дату початку.',
         ]);
 
         $overlap = Deal::where('car_id', $car->id)

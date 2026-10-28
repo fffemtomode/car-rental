@@ -18,47 +18,47 @@
 
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Марка</label>
-        <input type="text" name="brand" value="{{ old('brand', $car->brand ?? '') }}" class="border rounded px-3 py-2 w-full" required>
+        <input type="text" name="brand" value="{{ old('brand', $car->brand ?? '') }}" class="border border-gray-300 rounded px-3 py-2 w-full bg-white" required>
     </div>
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Модель</label>
-        <input type="text" name="model" value="{{ old('model', $car->model ?? '') }}" class="border rounded px-3 py-2 w-full" required>
+        <input type="text" name="model" value="{{ old('model', $car->model ?? '') }}" class="border border-gray-300 rounded px-3 py-2 w-full bg-white" required>
     </div>
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Рік</label>
-        <input type="number" name="year" value="{{ old('year', $car->year ?? '') }}" class="border rounded px-3 py-2 w-full" required>
+        <input type="number" name="year" value="{{ old('year', $car->year ?? '') }}" class="border border-gray-300 rounded px-3 py-2 w-full bg-white" required>
     </div>
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Двигун</label>
-        <input type="text" name="engine" value="{{ old('engine', $car->engine ?? '') }}" placeholder="наприклад, 1.6 TDI, 115 к.с." class="border rounded px-3 py-2 w-full">
+        <input type="text" name="engine" value="{{ old('engine', $car->engine ?? '') }}" placeholder="наприклад, 1.6 TDI, 115 к.с." class="border border-gray-300 rounded px-3 py-2 w-full bg-white">
     </div>
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Пробіг (км)</label>
-        <input type="number" name="mileage" value="{{ old('mileage', $car->mileage ?? '') }}" class="border rounded px-3 py-2 w-full">
+        <input type="number" name="mileage" value="{{ old('mileage', $car->mileage ?? '') }}" class="border border-gray-300 rounded px-3 py-2 w-full bg-white">
     </div>
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Колір</label>
-        <input type="text" name="color" value="{{ old('color', $car->color ?? '') }}" class="border rounded px-3 py-2 w-full">
+        <input type="text" name="color" value="{{ old('color', $car->color ?? '') }}" class="border border-gray-300 rounded px-3 py-2 w-full bg-white">
     </div>
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Державний номерний знак</label>
-        <input type="text" name="plate_number" value="{{ old('plate_number', $car->plate_number ?? '') }}" placeholder="ВХ0230ІС" class="border rounded px-3 py-2 w-full">
+        <input type="text" name="plate_number" value="{{ old('plate_number', $car->plate_number ?? '') }}" placeholder="ВХ0230ІС" class="border border-gray-300 rounded px-3 py-2 w-full bg-white">
     </div>
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Номер кузова (VIN)</label>
-        <input type="text" name="vin" value="{{ old('vin', $car->vin ?? '') }}" class="border rounded px-3 py-2 w-full">
+        <input type="text" name="vin" value="{{ old('vin', $car->vin ?? '') }}" class="border border-gray-300 rounded px-3 py-2 w-full bg-white">
     </div>
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Ціна оренди/день</label>
-        <input type="number" step="0.01" name="price_per_day" value="{{ old('price_per_day', $car->price_per_day ?? '') }}" class="border rounded px-3 py-2 w-full" required>
+        <input type="number" step="0.01" name="price_per_day" value="{{ old('price_per_day', $car->price_per_day ?? '') }}" class="border border-gray-300 rounded px-3 py-2 w-full bg-white" required>
     </div>
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Ціна викупу</label>
-        <input type="number" step="0.01" name="buyout_price" value="{{ old('buyout_price', $car->buyout_price ?? '') }}" class="border rounded px-3 py-2 w-full">
+        <input type="number" step="0.01" name="buyout_price" value="{{ old('buyout_price', $car->buyout_price ?? '') }}" class="border border-gray-300 rounded px-3 py-2 w-full bg-white">
     </div>
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Статус</label>
-        <select name="status" class="border rounded px-3 py-2 w-full">
+        <select name="status" class="border border-gray-300 rounded px-3 py-2 w-full bg-white">
             @php
                 $statusLabels = [
                     'available' => 'Доступний',
@@ -107,7 +107,7 @@
 
         <div id="newPhotosPreview" class="flex gap-2 mb-3 flex-wrap"></div>
 
-        <input type="file" id="photoSourceInput" accept="image/*" class="border rounded px-3 py-2 w-full">
+        <input type="file" id="photoSourceInput" accept="image/*" class="border border-gray-300 rounded px-3 py-2 w-full bg-white">
 
         <div id="cropperWrapper" class="mt-3 hidden">
             <div class="max-w-md">

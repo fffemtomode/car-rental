@@ -6,38 +6,63 @@
             <div class="bg-green-100 text-green-700 p-3 rounded-lg mb-4">{{ session('success') }}</div>
         @endif
 
-        <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-4">
-            <span class="text-gray-600 text-sm">Загальна вартість підтверджених/завершених угод:</span>
-            <span class="text-xl font-bold text-blue-700 ml-2">{{ number_format($totalConfirmedValue, 0, '', ' ') }} грн</span>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div class="bg-blue-50 border border-blue-100 rounded-xl p-4">
+                <span class="text-gray-600 text-sm">Загальна вартість підтверджених/завершених угод:</span>
+                <span class="text-xl font-bold text-blue-700 ml-2">{{ number_format($totalConfirmedValue, 0, '', ' ') }} грн</span>
+            </div>
+            <div class="bg-green-50 border border-green-100 rounded-xl p-4">
+                <span class="text-gray-600 text-sm">Цього місяця: {{ $monthDealsCount }} заявок на суму</span>
+                <span class="text-xl font-bold text-green-700 ml-2">{{ number_format($monthDealsValue, 0, '', ' ') }} грн</span>
+            </div>
         </div>
 
-        <form method="GET" class="mb-4 flex flex-wrap gap-3">
-            <select name="status" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[180px]">
-                <option value="">Усі статуси</option>
-                <option value="pending" @selected(request('status') === 'pending')>Очікує підтвердження</option>
-                <option value="confirmed" @selected(request('status') === 'confirmed')>Підтверджено</option>
-                <option value="completed" @selected(request('status') === 'completed')>Завершено</option>
-                <option value="cancelled" @selected(request('status') === 'cancelled')>Скасовано</option>
-            </select>
+        <form method="GET" class="mb-4 flex flex-wrap items-end gap-3">
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">Статус</label>
+                <select name="status" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[180px]">
+                    <option value="">Усі статуси</option>
+                    <option value="pending" @selected(request('status') === 'pending')>Очікує підтвердження</option>
+                    <option value="confirmed" @selected(request('status') === 'confirmed')>Підтверджено</option>
+                    <option value="completed" @selected(request('status') === 'completed')>Завершено</option>
+                    <option value="cancelled" @selected(request('status') === 'cancelled')>Скасовано</option>
+                </select>
+            </div>
 
-            <select name="type" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[140px]">
-                <option value="">Усі типи</option>
-                <option value="rental" @selected(request('type') === 'rental')>Оренда</option>
-                <option value="buyout" @selected(request('type') === 'buyout')>Викуп</option>
-                <option value="leasing" @selected(request('type') === 'leasing')>Лізинг</option>
-            </select>
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">Тип</label>
+                <select name="type" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[140px]">
+                    <option value="">Усі типи</option>
+                    <option value="rental" @selected(request('type') === 'rental')>Оренда</option>
+                    <option value="buyout" @selected(request('type') === 'buyout')>Викуп</option>
+                    <option value="leasing" @selected(request('type') === 'leasing')>Лізинг</option>
+                </select>
+            </div>
 
-            <select name="car_id" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[160px]">
-                <option value="">Усі авто</option>
-                @foreach ($cars as $carOption)
-                    <option value="{{ $carOption->id }}" @selected((string) request('car_id') === (string) $carOption->id)>{{ $carOption->brand }} {{ $carOption->model }}</option>
-                @endforeach
-            </select>
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">Авто</label>
+                <select name="car_id" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[160px]">
+                    <option value="">Усі авто</option>
+                    @foreach ($cars as $carOption)
+                        <option value="{{ $carOption->id }}" @selected((string) request('car_id') === (string) $carOption->id)>{{ $carOption->brand }} {{ $carOption->model }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">З дати</label>
+                <input type="date" name="date_from" value="{{ request('date_from') }}" class="border border-gray-300 rounded-lg px-3 py-2 bg-white text-sm">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">По дату</label>
+                <input type="date" name="date_to" value="{{ request('date_to') }}" class="border border-gray-300 rounded-lg px-3 py-2 bg-white text-sm">
+            </div>
 
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Фільтрувати</button>
-            @if (request()->hasAny(['status', 'type', 'car_id']))
-                <a href="{{ route('admin.deals.index') }}" class="text-gray-600 px-4 py-2">Скинути</a>
+            @if (request()->hasAny(['status', 'type', 'car_id', 'date_from', 'date_to']))
+                <a href="{{ route('admin.deals.index') }}" class="text-gray-600 px-2 py-2">Скинути</a>
             @endif
+            <a href="{{ route('admin.deals.export', request()->query()) }}" class="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800 ml-auto">⬇ Експорт в Excel</a>
         </form>
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">

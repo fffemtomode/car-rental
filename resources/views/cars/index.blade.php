@@ -4,22 +4,22 @@
 
         <div class="flex flex-col sm:flex-row gap-6">
             <aside class="sm:w-64 shrink-0">
-                <form method="GET" class="border rounded-lg p-4 space-y-3">
+                <form method="GET" class="border rounded-lg p-4 space-y-3 bg-white">
                     <div>
                         <label class="block text-sm text-gray-700 mb-1">Марка</label>
-                        <input type="text" name="brand" value="{{ request('brand') }}" class="border rounded px-3 py-2 w-full">
+                        <input type="text" name="brand" value="{{ request('brand') }}" class="border rounded px-3 py-2 w-full bg-white">
                     </div>
                     <div>
                         <label class="block text-sm text-gray-700 mb-1">Ціна від</label>
-                        <input type="number" name="min_price" value="{{ request('min_price') }}" class="border rounded px-3 py-2 w-full">
+                        <input type="number" name="min_price" value="{{ request('min_price') }}" class="border rounded px-3 py-2 w-full bg-white bg-white">
                     </div>
                     <div>
                         <label class="block text-sm text-gray-700 mb-1">Ціна до</label>
-                        <input type="number" name="max_price" value="{{ request('max_price') }}" class="border rounded px-3 py-2 w-full">
+                        <input type="number" name="max_price" value="{{ request('max_price') }}" class="border rounded px-3 py-2 w-full bg-white">
                     </div>
                     <div>
                         <label class="block text-sm text-gray-700 mb-1">Статус</label>
-                        <select name="status" class="border rounded px-3 py-2 w-full">
+                        <select name="status" class="border rounded px-3 py-2 w-full bg-white">
                             <option value="">Усі</option>
                             <option value="available" @selected(request('status') === 'available')>Доступний</option>
                             <option value="rented" @selected(request('status') === 'rented')>В оренді</option>
@@ -29,11 +29,11 @@
                     <hr>
                     <div>
                         <label class="block text-sm text-gray-700 mb-1">Вільне з</label>
-                        <input type="date" name="available_from" value="{{ request('available_from') }}" class="border rounded px-3 py-2 w-full">
+                        <input type="date" name="available_from" value="{{ request('available_from') }}" class="border rounded px-3 py-2 w-full bg-white">
                     </div>
                     <div>
                         <label class="block text-sm text-gray-700 mb-1">Вільне до</label>
-                        <input type="date" name="available_to" value="{{ request('available_to') }}" class="border rounded px-3 py-2 w-full">
+                        <input type="date" name="available_to" value="{{ request('available_to') }}" class="border rounded px-3 py-2 w-full bg-white">
                     </div>
                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded w-full">Застосувати</button>
                     @if (request()->hasAny(['brand', 'min_price', 'max_price', 'status', 'available_from', 'available_to']))
