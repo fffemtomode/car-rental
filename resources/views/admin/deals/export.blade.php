@@ -29,10 +29,10 @@
     <tbody>
     @foreach ($deals as $deal)
         <tr>
-            <td>{{ $deal->id }}</td>
+            <td style="mso-number-format:'\@';">{{ $deal->id }}</td>
             <td>{{ $deal->created_at->format('d.m.Y H:i') }}</td>
             <td>{{ $deal->user->name }}</td>
-            <td>{{ $deal->user->phone }}</td>
+            <td style="mso-number-format:'\@';">{{ $deal->user->phone }}</td>
             <td>{{ $deal->car->brand }} {{ $deal->car->model }}</td>
             <td>{{ $deal->type_label }}</td>
             <td>{{ $deal->status_label }}</td>

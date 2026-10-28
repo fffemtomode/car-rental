@@ -17,63 +17,56 @@
             </div>
         </div>
 
-        <form method="GET" class="mb-4 flex flex-wrap items-end gap-3">
-            <div>
-                <label class="block text-xs text-gray-500 mb-1">Статус</label>
-                <select name="status" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[180px]">
-                    <option value="">Усі статуси</option>
-                    <option value="pending" @selected(request('status') === 'pending')>Очікує підтвердження</option>
-                    <option value="confirmed" @selected(request('status') === 'confirmed')>Підтверджено</option>
-                    <option value="completed" @selected(request('status') === 'completed')>Завершено</option>
-                    <option value="cancelled" @selected(request('status') === 'cancelled')>Скасовано</option>
-                </select>
-            </div>
-
-            <div>
-                <label class="block text-xs text-gray-500 mb-1">Тип</label>
-                <select name="type" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[140px]">
-                    <option value="">Усі типи</option>
-                    <option value="rental" @selected(request('type') === 'rental')>Оренда</option>
-                    <option value="buyout" @selected(request('type') === 'buyout')>Викуп</option>
-                    <option value="leasing" @selected(request('type') === 'leasing')>Лізинг</option>
-                </select>
-            </div>
-
-            <div>
-                <label class="block text-xs text-gray-500 mb-1">Авто</label>
-                <select name="car" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[160px]">
-                    <option value="">Усі авто</option>
-                    @foreach ($cars as $carOption)
-                        @php $carValue = $carOption->brand . '|' . $carOption->model; @endphp
-                        <option value="{{ $carValue }}" @selected(request('car') === $carValue)>{{ $carOption->brand }} {{ $carOption->model }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div>
-                <label class="block text-xs text-gray-500 mb-1">З дати</label>
-                <input type="date" name="date_from" value="{{ request('date_from') }}" class="border border-gray-300 rounded-lg px-3 py-2 bg-white text-sm">
-            </div>
-            <div>
-                <label class="block text-xs text-gray-500 mb-1">По дату</label>
-                <input type="date" name="date_to" value="{{ request('date_to') }}" class="border border-gray-300 rounded-lg px-3 py-2 bg-white text-sm">
-            </div>
-
-            <div>
-                <label class="block text-xs text-gray-500 mb-1 invisible">.</label>
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Фільтрувати</button>
-            </div>
-
-            @if (request()->hasAny(['status', 'type', 'car', 'date_from', 'date_to']))
+        <form method="GET" class="mb-4">
+            <div class="flex flex-wrap gap-3 mb-3">
                 <div>
-                    <label class="block text-xs text-gray-500 mb-1 invisible">.</label>
-                    <a href="{{ route('admin.deals.index') }}" class="inline-block text-gray-600 px-2 py-2">Скинути</a>
+                    <label class="block text-xs text-gray-500 mb-1">Статус</label>
+                    <select name="status" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[180px]">
+                        <option value="">Усі статуси</option>
+                        <option value="pending" @selected(request('status') === 'pending')>Очікує підтвердження</option>
+                        <option value="confirmed" @selected(request('status') === 'confirmed')>Підтверджено</option>
+                        <option value="completed" @selected(request('status') === 'completed')>Завершено</option>
+                        <option value="cancelled" @selected(request('status') === 'cancelled')>Скасовано</option>
+                    </select>
                 </div>
-            @endif
 
-            <div>
-                <label class="block text-xs text-gray-500 mb-1 invisible">.</label>
-                <a href="{{ route('admin.deals.export', request()->query()) }}" class="inline-block bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800">⬇ Експорт в Excel</a>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">Тип</label>
+                    <select name="type" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[140px]">
+                        <option value="">Усі типи</option>
+                        <option value="rental" @selected(request('type') === 'rental')>Оренда</option>
+                        <option value="buyout" @selected(request('type') === 'buyout')>Викуп</option>
+                        <option value="leasing" @selected(request('type') === 'leasing')>Лізинг</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">Авто</label>
+                    <select name="car" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[160px]">
+                        <option value="">Усі авто</option>
+                        @foreach ($cars as $carOption)
+                            @php $carValue = $carOption->brand . '|' . $carOption->model; @endphp
+                            <option value="{{ $carValue }}" @selected(request('car') === $carValue)>{{ $carOption->brand }} {{ $carOption->model }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">З дати</label>
+                    <input type="date" name="date_from" value="{{ request('date_from') }}" class="border border-gray-300 rounded-lg px-3 py-2 bg-white text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">По дату</label>
+                    <input type="date" name="date_to" value="{{ request('date_to') }}" class="border border-gray-300 rounded-lg px-3 py-2 bg-white text-sm">
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3">
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Фільтрувати</button>
+                <a href="{{ route('admin.deals.export', request()->query()) }}" class="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800">⬇ Експорт в Excel</a>
+                @if (request()->hasAny(['status', 'type', 'car', 'date_from', 'date_to']))
+                    <a href="{{ route('admin.deals.index') }}" class="text-gray-600 text-sm">Скинути фільтр</a>
+                @endif
             </div>
         </form>
 
