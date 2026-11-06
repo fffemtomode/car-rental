@@ -11,6 +11,9 @@ class DealAdminController extends Controller
 {
     private function applyFilters($query, Request $request)
     {
+        if ($request->filled('search')) {
+            $query->where('id', $request->search);
+        }
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }

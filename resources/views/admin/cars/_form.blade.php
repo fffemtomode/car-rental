@@ -26,7 +26,7 @@
     </div>
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Рік</label>
-        <input type="number" name="year" value="{{ old('year', $car->year ?? '') }}" class="border border-gray-300 rounded px-3 py-2 w-full bg-white" required>
+        <input type="number" name="year" value="{{ old('year', $car->year ?? '') }}" min="1990" max="{{ date('Y') + 1 }}" class="border border-gray-300 rounded px-3 py-2 w-full bg-white" required>
     </div>
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Двигун</label>
@@ -34,7 +34,7 @@
     </div>
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Пробіг (км)</label>
-        <input type="number" name="mileage" value="{{ old('mileage', $car->mileage ?? '') }}" class="border border-gray-300 rounded px-3 py-2 w-full bg-white">
+        <input type="number" name="mileage" value="{{ old('mileage', $car->mileage ?? '') }}" min="0" class="border border-gray-300 rounded px-3 py-2 w-full bg-white">
     </div>
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Колір</label>
@@ -50,11 +50,15 @@
     </div>
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Ціна оренди/день</label>
-        <input type="number" step="0.01" name="price_per_day" value="{{ old('price_per_day', $car->price_per_day ?? '') }}" class="border border-gray-300 rounded px-3 py-2 w-full bg-white" required>
+        <input type="number" step="0.01" name="price_per_day" value="{{ old('price_per_day', $car->price_per_day ?? '') }}" min="0" class="border border-gray-300 rounded px-3 py-2 w-full bg-white" required>
     </div>
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Ціна викупу</label>
-        <input type="number" step="0.01" name="buyout_price" value="{{ old('buyout_price', $car->buyout_price ?? '') }}" class="border border-gray-300 rounded px-3 py-2 w-full bg-white">
+        <input type="number" step="0.01" name="buyout_price" value="{{ old('buyout_price', $car->buyout_price ?? '') }}" min="0" class="border border-gray-300 rounded px-3 py-2 w-full bg-white">
+    </div>
+    <div class="mb-4">
+        <label class="block mb-1 text-gray-900">Ціна лізингу (грн, загальна сума)</label>
+        <input type="number" step="0.01" name="leasing_price" value="{{ old('leasing_price', $car->leasing_price ?? '') }}" min="0" class="border border-gray-300 rounded px-3 py-2 w-full bg-white">
     </div>
     <div class="mb-4">
         <label class="block mb-1 text-gray-900">Статус</label>

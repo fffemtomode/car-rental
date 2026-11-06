@@ -172,22 +172,33 @@
 
 {{-- Відгуки --}}
 @php
-    $testimonials = \App\Models\Review::with(['user', 'car'])->where('status', 'approved')->latest()->take(3)->get();
+    $testimonials = \App\Models\Review::with(['user', 'car'])->where('status', 'approved')->latest()->take(9)->get();
 @endphp
 @if ($testimonials->isNotEmpty())
-    <section class="max-w-6xl mx-auto px-4 pb-24">
+    <section class="max-w-3xl mx-auto px-4 pb-24">
         <h2 class="text-2xl font-bold text-center mb-8">Що кажуть клієнти</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            @foreach ($testimonials as $review)
-                <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                    <div class="text-yellow-500 mb-2">{{ str_repeat('★', $review->rating) }}{{ str_repeat('☆', 5 - $review->rating) }}</div>
-                    <p class="text-gray-700 text-sm mb-4">"{{ $review->text }}"</p>
+        <div x-data="{ active: 0, total: {{ $testimonials->count() }} }" class="relative bg-white border border-gray-200 rounded-xl shadow-sm p-8 min-h-[220px]">
+            @foreach ($testimonials as $i => $review)
+                <div x-show="active === {{ $i }}" x-transition class="text-center">
+                    <div class="text-yellow-500 text-xl mb-3">{{ str_repeat('★', $review->rating) }}{{ str_repeat('☆', 5 - $review->rating) }}</div>
+                    <p class="text-gray-700 mb-4">"{{ $review->text }}"</p>
                     <p class="text-gray-900 font-medium text-sm">{{ $review->user->name }}</p>
                     @if ($review->car)
                         <p class="text-gray-400 text-xs">{{ $review->car->brand }} {{ $review->car->model }}</p>
                     @endif
                 </div>
             @endforeach
+
+            @if ($testimonials->count() > 1)
+                <button type="button" @click="active = (active - 1 + total) % total" class="absolute left-2 top-1/2 -translate-y-1/2 bg-gray-100 hover:bg-gray-200 rounded-full w-9 h-9 flex items-center justify-center">‹</button>
+                <button type="button" @click="active = (active + 1) % total" class="absolute right-2 top-1/2 -translate-y-1/2 bg-gray-100 hover:bg-gray-200 rounded-full w-9 h-9 flex items-center justify-center">›</button>
+
+                <div class="flex justify-center gap-1 mt-6">
+                    @foreach ($testimonials as $i => $review)
+                        <button type="button" @click="active = {{ $i }}" :class="active === {{ $i }} ? 'bg-blue-600' : 'bg-gray-300'" class="w-2 h-2 rounded-full"></button>
+                    @endforeach
+                </div>
+            @endif
         </div>
     </section>
 @endif

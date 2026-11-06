@@ -60,6 +60,7 @@ class CarAdminController extends Controller
             'vin' => 'nullable|string|max:50',
             'price_per_day' => 'required|numeric|min:0',
             'buyout_price' => 'nullable|numeric|min:0',
+            'leasing_price' => 'nullable|numeric|min:0',
             'status' => 'required|in:available,rented,sold,maintenance',
             'photos.*' => 'nullable|image|max:4096',
         ]);
@@ -96,6 +97,7 @@ class CarAdminController extends Controller
             'vin' => 'nullable|string|max:50',
             'price_per_day' => 'required|numeric|min:0',
             'buyout_price' => 'nullable|numeric|min:0',
+            'leasing_price' => 'nullable|numeric|min:0',
             'status' => 'required|in:available,rented,sold,maintenance',
             'photos.*' => 'nullable|image|max:4096',
         ]);

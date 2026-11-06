@@ -7,13 +7,29 @@ use App\Http\Controllers\DealController;
 use App\Http\Controllers\DealHistoryController;
 use App\Http\Controllers\Admin\CarAdminController;
 use App\Http\Controllers\Admin\DealAdminController;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
+Route::get('/dashboard', function (Request $request) {
+    $user = $request->user();
+
+    if (in_array($user->role, ['manager', 'admin'])) {
+        return view('dashboard');
+    }
+
+    $recentDeals = $user->deals()->with('car')->latest()->paginate(5, ['*'], 'deals_page');
+
+    $spentTotal = $user->deals()->whereIn('status', ['confirmed', 'completed'])->sum('total_price');
+    $dealsByType = [
+        'rental' => $user->deals()->where('type', 'rental')->count(),
+        'buyout' => $user->deals()->where('type', 'buyout')->count(),
+        'leasing' => $user->deals()->where('type', 'leasing')->count(),
+    ];
+
+    return view('dashboard', compact('recentDeals', 'spentTotal', 'dealsByType'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/cars', [CarController::class, 'index'])->name('cars.index');
@@ -75,6 +91,7 @@ Route::middleware(['auth', 'manager'])->prefix('admin')->name('admin.')->group(f
 
     Route::get('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'edit'])->name('settings.edit');
     Route::post('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
+    Route::get('/deals/export', [DealAdminController::class, 'export'])->name('deals.export');
 });
 
 

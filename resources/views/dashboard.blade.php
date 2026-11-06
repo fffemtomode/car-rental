@@ -174,15 +174,74 @@
                     </div>
                 </div>
             @else
-                @php
-                    $activeDealsCount = auth()->user()->deals()->whereIn('status', ['pending', 'confirmed'])->count();
-                    $recentDeals = auth()->user()->deals()->with('car')->latest()->take(3)->get();
-                    $recommendedCars = \App\Models\Car::where('status', 'available')->inRandomOrder()->take(3)->get();
-                @endphp
                 <div class="bg-white border rounded-lg p-6 mb-6">
-                    <p class="text-gray-900">У тебе <strong>{{ $activeDealsCount }}</strong> активних угод.</p>
+                    <p class="text-gray-900">У тебе <strong>{{ auth()->user()->deals()->whereIn('status', ['pending', 'confirmed'])->count() }}</strong> активних угод.</p>
                     <a href="{{ route('deals.history') }}" class="text-blue-600 hover:underline">Переглянути мої угоди →</a>
                 </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white border rounded-lg p-6">
+                        <div class="text-2xl font-bold text-blue-600">{{ number_format($spentTotal, 0, '', ' ') }} грн</div>
+                        <div class="text-gray-600 mt-1 text-sm">Всього витрачено</div>
+                    </div>
+                    <div class="bg-white border rounded-lg p-6">
+                        <div class="text-2xl font-bold text-gray-900">{{ $dealsByType['rental'] }}</div>
+                        <div class="text-gray-600 mt-1 text-sm">Оренд</div>
+                    </div>
+                    <div class="bg-white border rounded-lg p-6">
+                        <div class="text-2xl font-bold text-gray-900">{{ $dealsByType['buyout'] }}</div>
+                        <div class="text-gray-600 mt-1 text-sm">Викупів</div>
+                    </div>
+                    <div class="bg-white border rounded-lg p-6">
+                        <div class="text-2xl font-bold text-gray-900">{{ $dealsByType['leasing'] }}</div>
+                        <div class="text-gray-600 mt-1 text-sm">Лізингів</div>
+                    </div>
+                </div>
+
+                {{-- === Кругова діаграма розподілу угод за типом (для клієнта) === --}}
+                @php
+                    $chartSegments = [
+                        ['label' => 'Оренда', 'value' => $dealsByType['rental'], 'color' => '#3b82f6'],
+                        ['label' => 'Викуп', 'value' => $dealsByType['buyout'], 'color' => '#22c55e'],
+                        ['label' => 'Лізинг', 'value' => $dealsByType['leasing'], 'color' => '#a855f7'],
+                    ];
+                    $chartTotal = collect($chartSegments)->sum('value');
+                    $chartRadius = 60;
+                    $chartCircumference = 2 * M_PI * $chartRadius;
+                    $chartOffset = 0;
+                @endphp
+                @if ($chartTotal > 0)
+                    <div class="bg-white border rounded-lg p-4 mb-6">
+                        <h3 class="font-semibold text-gray-900 mb-4">Розподіл моїх угод за типом</h3>
+                        <div class="flex items-center gap-6">
+                            <svg viewBox="0 0 140 140" class="w-28 h-28 -rotate-90 shrink-0">
+                                <circle cx="70" cy="70" r="{{ $chartRadius }}" fill="none" stroke="#f3f4f6" stroke-width="18"/>
+                                @foreach ($chartSegments as $seg)
+                                    @php
+                                        $fraction = $chartTotal ? $seg['value'] / $chartTotal : 0;
+                                        $dash = $fraction * $chartCircumference;
+                                    @endphp
+                                    @if ($seg['value'] > 0)
+                                        <circle cx="70" cy="70" r="{{ $chartRadius }}" fill="none" stroke="{{ $seg['color'] }}" stroke-width="18"
+                                                stroke-dasharray="{{ $dash }} {{ $chartCircumference - $dash }}"
+                                                stroke-dashoffset="{{ -$chartOffset }}" />
+                                        @php $chartOffset += $dash; @endphp
+                                    @endif
+                                @endforeach
+                            </svg>
+                            <div class="space-y-2 text-sm">
+                                @foreach ($chartSegments as $seg)
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-3 h-3 rounded-full inline-block" style="background: {{ $seg['color'] }}"></span>
+                                        <span class="text-gray-700">{{ $seg['label'] }}:</span>
+                                        <span class="font-medium text-gray-900">{{ $seg['value'] }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                {{-- === /Кругова діаграма === --}}
 
                 @if ($recentDeals->isNotEmpty())
                     <div class="bg-white border rounded-lg p-4 mb-6">
@@ -190,14 +249,22 @@
                         <div class="space-y-2">
                             @foreach ($recentDeals as $rd)
                                 <a href="{{ route('deals.show', $rd) }}" class="flex justify-between items-center text-sm border-b last:border-0 py-2 hover:bg-gray-50 px-2 -mx-2 rounded">
-                                    <span class="text-gray-900">{{ $rd->car->brand }} {{ $rd->car->model }} · {{ $rd->type_label }}</span>
-                                    <span class="text-gray-500">{{ $rd->status_label }}</span>
+                                    <div>
+                                        <span class="text-gray-900">{{ $rd->car->brand }} {{ $rd->car->model }} · {{ $rd->type_label }}</span>
+                                        <span class="text-gray-400 block text-xs">{{ $rd->created_at->format('d.m.Y') }}</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-gray-900 font-medium block">{{ $rd->total_price ? number_format($rd->total_price, 0, '', ' ') . ' грн' : '—' }}</span>
+                                        <span class="text-gray-500 text-xs">{{ $rd->status_label }}</span>
+                                    </div>
                                 </a>
                             @endforeach
                         </div>
+                        <div class="mt-3">{{ $recentDeals->links() }}</div>
                     </div>
                 @endif
 
+                @php $recommendedCars = \App\Models\Car::where('status', 'available')->inRandomOrder()->take(3)->get(); @endphp
                 @if ($recommendedCars->isNotEmpty())
                     <div class="mb-6">
                         <h3 class="font-semibold text-gray-900 mb-3">Можливо, тобі сподобається</h3>

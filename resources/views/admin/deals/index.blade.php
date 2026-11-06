@@ -17,8 +17,13 @@
             </div>
         </div>
 
-        <form method="GET" class="mb-4">
+        <form method="GET">
             <div class="flex flex-wrap gap-3 mb-3">
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">№ заявки</label>
+                    <input type="number" name="search" value="{{ request('search') }}" placeholder="наприклад 12" class="border border-gray-300 rounded-lg px-3 py-2 bg-white text-sm w-28">
+                </div>
+
                 <div>
                     <label class="block text-xs text-gray-500 mb-1">Статус</label>
                     <select name="status" class="border border-gray-300 rounded-lg pl-3 pr-8 py-2 bg-white text-gray-900 text-sm min-w-[180px]">
@@ -63,17 +68,19 @@
 
             <div class="flex flex-wrap items-center gap-3">
                 <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Фільтрувати</button>
-                <a href="{{ route('admin.deals.export', request()->query()) }}" class="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800">⬇ Експорт в Excel</a>
-                @if (request()->hasAny(['status', 'type', 'car', 'date_from', 'date_to']))
+                <a href="{{ route('admin.deals.export', request()->query()) }}" class="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800">Експорт в Excel</a>
+                (['search', 'status', 'type', 'car', 'date_from', 'date_to']))
                     <a href="{{ route('admin.deals.index') }}" class="text-gray-600 text-sm">Скинути фільтр</a>
                 @endif
             </div>
         </form>
 
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mt-4">
             <table class="w-full text-gray-900">
                 <thead>
                 <tr class="bg-gray-50 border-b-2 border-gray-200">
+                    <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">№</th>
                     <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Дата</th>
                     <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Клієнт</th>
                     <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">Телефон</th>
@@ -87,6 +94,7 @@
                 <tbody>
                 @foreach ($deals as $deal)
                     <tr class="border-b border-gray-100 last:border-0 {{ $deal->status === 'pending' ? 'bg-amber-50 hover:bg-amber-100' : 'hover:bg-gray-50' }}">
+                        <td class="px-4 py-3 text-sm">#{{ $deal->id }}</td>
                         <td class="px-4 py-3 text-sm">{{ $deal->created_at->format('d.m.Y') }}</td>
                         <td class="px-4 py-3 font-medium">{{ $deal->user->name }}</td>
                         <td class="px-4 py-3 text-sm">{{ $deal->user->phone ?? '—' }}</td>
@@ -95,9 +103,9 @@
                         <td class="px-4 py-3">{{ $deal->total_price ? number_format($deal->total_price, 0, '', ' ') . ' грн' : '—' }}</td>
                         <td class="px-4 py-3">
                             @if ($deal->status === 'pending')
-                                <span class="text-xs font-medium bg-amber-200 text-amber-800 px-2 py-1 rounded-full">{{ $deal->status_label }}</span>
+                                <span class="text-xs font-medium bg-amber-200 text-amber-800 px-2 py-1 rounded-full whitespace-nowrap">{{ $deal->status_label }}</span>
                             @else
-                                <span class="text-xs font-medium px-2 py-1 rounded-full
+                                <span class="text-xs font-medium px-2 py-1 rounded-full whitespace-nowrap
                                     {{ $deal->status === 'confirmed' ? 'bg-blue-100 text-blue-700' :
                                        ($deal->status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600') }}">
                                     {{ $deal->status_label }}

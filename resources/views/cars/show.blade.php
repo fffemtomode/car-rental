@@ -63,10 +63,12 @@
                 @if (!in_array($car->status, ['sold', 'maintenance']))
                     <a href="{{ route('deals.create-rental', $car) }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Орендувати</a>
                 @endif
-                @if ($car->status === 'available')
-                    <a href="{{ route('deals.create-buyout', $car) }}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">Викупити</a>
-                    <a href="{{ route('deals.create-leasing', $car) }}" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Лізинг</a>
-                @endif
+                    @if ($car->status === 'available')
+                        <a href="{{ route('deals.create-buyout', $car) }}" class="bg-green-600 text-white px-4 py-2 rounded">Викупити</a>
+                        @if ($car->leasing_price)
+                            <a href="{{ route('deals.create-leasing', $car) }}" class="bg-purple-600 text-white px-4 py-2 rounded">Лізинг</a>
+                        @endif
+                    @endif
             </div>
             @if ($car->status === 'sold')
                 <p class="mb-6 text-gray-600">Це авто продано.</p>

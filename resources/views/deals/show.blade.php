@@ -117,7 +117,7 @@
                 <form method="POST" action="{{ route('admin.deals.confirm', $deal) }}" class="flex gap-2 items-start flex-wrap">
                     @csrf
                     @if ($deal->type === 'rental')
-                        <input type="number" name="mileage_start" placeholder="Пробіг на видачі (км)" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        <input type="number" name="mileage_start" placeholder="Пробіг на видачі (км)" min="0" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
                     @endif
                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Підтвердити угоду</button>
                 </form>
@@ -134,8 +134,14 @@
             @if ($deal->status === 'confirmed' && in_array(auth()->user()->role, ['manager', 'admin']))
                 <form method="POST" action="{{ route('admin.deals.complete', $deal) }}" class="flex gap-2 items-start flex-wrap" onsubmit="return confirm('Завершити угоду?')">
                     @csrf
-                    <input type="number" name="mileage_end" placeholder="Пробіг на поверненні (км)" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    <input type="number" name="mileage_end" placeholder="Пробіг на поверненні (км)" min="0" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
                     <button type="submit" class="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800 whitespace-nowrap">Завершити угоду</button>
+                </form>
+
+                <form method="POST" action="{{ route('admin.deals.reject', $deal) }}" onsubmit="return confirm('Відхилити вже підтверджену угоду? Авто знову стане доступним.')" class="flex gap-2 items-start">
+                    @csrf
+                    <input type="text" name="reason" placeholder="Причина скасування (необов'язково)" class="border border-gray-300 rounded-lg px-3 py-2 text-sm flex-1">
+                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 whitespace-nowrap">Відхилити угоду</button>
                 </form>
             @endif
 

@@ -22,7 +22,7 @@
                     </div>
                     <div>
                         <label class="block mb-1 text-sm text-gray-900">Пробіг на момент ТО (км)</label>
-                        <input type="number" name="mileage_at_service" class="border border-gray-300 rounded-lg px-3 py-2 w-full">
+                        <input type="number" name="mileage_at_service" min="0" class="border border-gray-300 rounded-lg px-3 py-2 w-full">
                     </div>
                     <div>
                         <label class="block mb-1 text-sm text-gray-900">Примітка</label>

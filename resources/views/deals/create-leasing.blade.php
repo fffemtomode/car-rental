@@ -18,7 +18,6 @@
                     <h2 class="font-semibold text-gray-900 text-lg mb-2">{{ $car->brand }} {{ $car->model }} ({{ $car->year }})</h2>
                     @if ($car->engine)<p class="text-gray-500">Двигун: {{ $car->engine }}</p>@endif
                     @if ($car->color)<p class="text-gray-500">Колір: {{ $car->color }}</p>@endif
-                    <p class="text-gray-900 font-medium mt-2">Орієнтовна вартість: {{ number_format($car->buyout_price, 0, '', ' ') }} грн</p>
                 </div>
             </div>
 
@@ -29,18 +28,26 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('deals.store-leasing', $car) }}">
-                    @csrf
-                    <div class="mb-4">
-                        <label class="block mb-1 text-gray-900 text-sm font-medium">Сума лізингу (грн)</label>
-                        <input type="number" name="amount" value="{{ $car->buyout_price }}" class="border border-gray-300 rounded-lg px-3 py-2 w-full" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block mb-1 text-gray-900 text-sm font-medium">Строк (місяців)</label>
-                        <input type="number" name="leasing_months" value="12" min="1" max="60" class="border border-gray-300 rounded-lg px-3 py-2 w-full" required>
-                    </div>
-                    <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 w-full">Підтвердити заявку на лізинг</button>
-                </form>
+                @if (!$car->leasing_price)
+                    <p class="text-gray-600">Для цього автомобіля лізинг наразі недоступний.</p>
+                @else
+                    <p class="text-gray-500 text-sm mb-1">Загальна вартість лізингу</p>
+                    <p class="text-3xl font-extrabold text-gray-900 mb-6">{{ number_format($car->leasing_price, 0, '', ' ') }} грн</p>
+
+                    <form method="POST" action="{{ route('deals.store-leasing', $car) }}">
+                        @csrf
+                        <div class="mb-4">
+                            <label class="block mb-1 text-gray-900 text-sm font-medium">Строк лізингу</label>
+                            <select name="leasing_months" class="border border-gray-300 rounded-lg px-3 py-2 w-full bg-white" required>
+                                <option value="">Оберіть строк</option>
+                                @foreach ([6, 12, 18, 24, 36] as $months)
+                                    <option value="{{ $months }}">{{ $months }} місяців, {{ number_format($car->leasing_price / $months, 0, '', ' ') }} грн/міс</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 w-full">Підтвердити заявку на лізинг</button>
+                    </form>
+                @endif
             </div>
         </div>
     </div>

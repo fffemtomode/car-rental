@@ -97,9 +97,12 @@ class DealController extends Controller
 
     public function storeLeasing(Request $request, Car $car)
     {
+        if (!$car->leasing_price) {
+            return back()->withErrors(['leasing' => 'Для цього автомобіля лізинг наразі недоступний.']);
+        }
+
         $validated = $request->validate([
-            'amount' => 'required|numeric|min:1',
-            'leasing_months' => 'required|integer|min:1|max:60',
+            'leasing_months' => 'required|integer|in:6,12,18,24,36',
         ]);
 
         $deal = Deal::create([
@@ -107,11 +110,11 @@ class DealController extends Controller
             'car_id' => $car->id,
             'type' => 'leasing',
             'status' => 'pending',
-            'total_price' => $validated['amount'],
+            'total_price' => $car->leasing_price,
             'leasing_months' => $validated['leasing_months'],
         ]);
 
-        $monthlyPayment = round($validated['amount'] / $validated['leasing_months'], 2);
+        $monthlyPayment = round($car->leasing_price / $validated['leasing_months'], 2);
         $startDate = now()->addMonth()->startOfMonth();
 
         for ($i = 0; $i < $validated['leasing_months']; $i++) {
@@ -143,7 +146,12 @@ class DealController extends Controller
             default => null,
         };
 
-        $pdf = Pdf::loadView('pdf.contract', ['deal' => $deal, 'car' => $deal->car]);
+        $template = match ($deal->type) {
+            'buyout' => 'pdf.buyout',
+            'leasing' => 'pdf.leasing',
+            default => 'pdf.contract',
+        };
+        $pdf = Pdf::loadView($template, ['deal' => $deal, 'car' => $deal->car]);
         $fileName = 'contract_' . $deal->id . '.pdf';
         $path = 'contracts/' . $fileName;
 
@@ -217,15 +225,19 @@ class DealController extends Controller
             'cancellation_reason' => $request->input('reason'),
         ]);
 
+        if (in_array($deal->car->status, ['rented', 'sold'])) {
+            $deal->car->update(['status' => 'available']);
+        }
+
         \App\Models\Notification::where('deal_id', $deal->id)->where('type', 'new_deal')->update(['type' => 'deal_rejected']);
 
         $deal->user->appNotifications()->create([
             'deal_id' => $deal->id,
-            'message' => "Вашу заявку #{$deal->id} відхилено менеджером." . ($request->input('reason') ? " Причина: {$request->input('reason')}" : ''),
+            'message' => "Вашу угоду #{$deal->id} відхилено менеджером." . ($request->input('reason') ? " Причина: {$request->input('reason')}" : ''),
             'type' => 'deal_rejected',
         ]);
 
-        return redirect()->route('admin.deals.index')->with('success', 'Заявку відхилено.');
+        return redirect()->route('admin.deals.index')->with('success', 'Угоду відхилено.');
     }
 
     private function notifyManagers(Deal $deal): void
